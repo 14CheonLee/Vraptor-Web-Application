@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, Response, request
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy, inspect
 
 import requests, json
@@ -75,75 +75,116 @@ def create_account():
     json_data = json.dumps({"State": "OK"})
     return Response(json_data, status=200, mimetype="application/json")
 
-'''
-socket IO
-'''
 
-# fan controll
-
+'''
+Socket IO
+'''
+# Fan
 @socketio.on('connect', namespace='/fan')
-def connect(mes):
+def connect():
+    print("[Socket_Fan] Connected")
+    emit("response", {"data": "[Socket_Fan] Connected"})
+
+
+@socketio.on('disconnect', namespace='/fan')
+def disconnect():
+    print("[Socket_FaN] Disconnected")
+
+
+@socketio.on('message', namespace='/fan')
+def message(data):
+    print(data)
+    emit("response", {"data": "[Socket_Fan] {}".format(data)})
+
+
+@socketio.on('get_fan_mode', namespace='/fan')
+def get_fan_mode(data):
+    print(data)
     url = config.INTERPRETER_URI + '/get_fan_mode'
     # headers = {'Content-type': 'text/html; charset=UTF-8'}
-    data = {'fan_id': 1}
+    dummy_data = {'fan_id': 1}
 
     """
     @TODO
     > Modify these
     """
     # response = requests.post(url, data=mes)
-    print(mes)
-    response = requests.post(url, data=data)
-    socketio.emit('response', response)
+    response = requests.post(url, data=dummy_data)
+    res_data = response.text
 
-@socketio.on('set', namespace='/fan')
-def set(mes):
+    emit("response", res_data)
+
+
+@socketio.on('set_fan_mode', namespace='/fan')
+def set_fan_mode(data):
+    print(data)
     url = config.INTERPRETER_URI + '/set_fan_mode'
     # headers = {'Content-type': 'text/html; charset=UTF-8'}
-    data = {'fan_id': 1, 'fan_mode':2}
+    dummy_data = {'fan_id': 1, 'fan_mode': 2}
 
     """
     @TODO
     > Modify these
     """
     # response = requests.post(url, data=mes)
-    print(mes)
-    response = requests.post(url, data=data)
-    socketio.emit('response', response)
+    response = requests.post(url, data=dummy_data)
+    res_data = response.text
 
-# sensor controll
+    emit('response', res_data)
 
+
+# Sensor
 @socketio.on('connect', namespace='/sensor')
-def connect(mes):
+def connect():
+    print("[Socket_Sensor] Connected")
+    emit("response", {"data": "[Socket_Sensor] Connected"})
+
+
+@socketio.on('disconnect', namespace='/sensor')
+def disconnect():
+    print("[Socket_Sensor] Disconnected")
+
+
+@socketio.on('message', namespace='/sensor')
+def message(data):
+    print(data)
+    emit("response", {"data": "[Socket_Sensor] {}".format(data)})
+
+
+@socketio.on('get_sensor_data', namespace='/sensor')
+def get_sensor_data(data):
+    print(data)
     url = config.INTERPRETER_URI + '/get_sensor_data'
     # headers = {'Content-type': 'text/html; charset=UTF-8'}
-    data = {'node_num': 1}
+    dummy_data = {'node_num': 1}
 
     """
     @TODO
     > Modify these
     """
     # response = requests.post(url, data=mes)
-    print(mes)
-    response = requests.post(url, data=data)
-    socketio.emit('response', response)
+    response = requests.post(url, data=dummy_data)
+    res_data = response.text
 
-# power controll
+    emit('response', res_data)
 
-@socketio.on('handle', namespace='/pw')
-def handle(mes):
-    url = config.INTERPRETER_URI + '/run_power_tool'
-    # headers = {'Content-type': 'text/html; charset=UTF-8'}
-    data = {'tag': 'on'}
 
-    """
-    @TODO
-    > Modify these
-    """
-    # response = requests.post(url, data=mes)
-    print(mes)
-    response = requests.post(url, data=data)
-    socketio.emit('response', response)
+# # power controll
+# @socketio.on('handle', namespace='/pw')
+# def handle(mes):
+#     url = config.INTERPRETER_URI + '/run_power_tool'
+#     # headers = {'Content-type': 'text/html; charset=UTF-8'}
+#     data = {'tag': 'on'}
+#
+#     """
+#     @TODO
+#     > Modify these
+#     """
+#     # response = requests.post(url, data=mes)
+#     print(mes)
+#     response = requests.post(url, data=data)
+#     socketio.emit('response', response)
+
 
 def init_db():
     # Drop tables
@@ -182,5 +223,5 @@ def activate_app():
 if __name__ == '__main__':
     activate_app()
     # app.run(port=5566, debug=True)
-    socketio.run(app, host='0.0.0.0', port=5566, use_reloader=False, debug=True)
-    print("--- server start ---")
+    print("[ Server starting with http://{}:{} ]".format(config.HOST, config.PORT))
+    socketio.run(app, host=config.HOST, port=config.PORT, use_reloader=True, debug=True)
