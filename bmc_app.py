@@ -5,6 +5,7 @@ from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 app.secret_key = "secret"
+socketio = SocketIO(app)
 
 @app.route('/')
 def hello_world():
