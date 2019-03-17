@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello Vraptor</title>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+</head>
+<body>
+    <p>Hello Vraptor</p>
+    <div class="data">
+        {% for value in data %}
+            <p>{{ value }}</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
