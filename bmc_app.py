@@ -7,7 +7,7 @@ socketio = SocketIO(app)
 
 
 @app.route('/')
-def hello_world():
+def index():
     data = ["Value 1"]
     return render_template("index.html", data=data)
 
