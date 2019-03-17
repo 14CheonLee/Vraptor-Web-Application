@@ -1,0 +1,7 @@
+# Flask
+Flask==0.12.2
+Flask-Cors==3.0.7
+Flask-SocketIO==2.9.2
+Flask-SQLAlchemy==2.3.2
+
+pytest==4.0.2

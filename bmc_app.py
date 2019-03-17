@@ -78,11 +78,16 @@ def create_account():
 
 @socketio.on('connect', namespace='/fan')
 def connect(mes):
-    url = 'http://127.0.0.1:7788/get_fan'
+    url = config.INTERPRETER_URI + '/get_fan'
     # headers = {'Content-type': 'text/html; charset=UTF-8'}
     data = {'fan_id': 1}
 
+    """
+    @TODO
+    > Modify these
+    """
     # response = requests.post(url, data=mes)
+    print(mes)
     response = requests.post(url, data=data)
 
     socketio.emit('response', response)
@@ -107,7 +112,8 @@ def init_db():
 
     # Insert dummy data to db
     db.session.add(
-        Account(user_id=config.ADMIN_USER_ID, user_pw=config.ADMIN_USER_PW, position="admin", email=config.ADMIN_EMAIL))
+        Account(user_id=config.ADMIN_USER_ID, user_pw=config.ADMIN_USER_PW, position="admin", email=config.ADMIN_EMAIL)
+    )
     db.session.add(Account(user_id="test", user_pw="test", position="test", email="test@test.com"))
 
     db.session.commit()
@@ -122,5 +128,6 @@ def activate_app():
 
 
 if __name__ == '__main__':
+    activate_app()
     # app.run(port=5566, debug=True)
-    socketio.run(app, host='0.0.0.0', port=5566, use_reloader=False)
+    socketio.run(app, host='0.0.0.0', port=5566, use_reloader=False, debug=True)
