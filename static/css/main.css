@@ -1,0 +1,187 @@
+.top-view {
+    height: 120px;
+    background: lightseagreen;
+    border-bottom: 2px solid black;
+}
+
+.logo {
+    width: 200px;
+    height: 60px;
+    margin: auto;
+    background: blue;
+    text-align: center;
+    border: 2px solid black;
+}
+
+.login {
+    width: 100px;
+    height: 40px;
+    background: yellow;
+    float: left;
+    margin: 0 0 0 10px;
+    text-align: center;
+    font-weight: bold;
+    padding: 6px 0 0 0;
+    border: 2px solid black;
+}
+
+.wrapper {
+    display: grid;
+    height: 720px;
+    grid-template-columns: 20% 50% 30%;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.wrapper .fan_control {
+    background: green;
+    border-right: 2px solid black;
+}
+
+.wrapper .fan_control .fan_status {
+    display: grid;
+    grid-template-rows: 25% 25% 25% 25%;
+    height: 720px;
+}
+
+.wrapper .fan_control .fan_status .ex_fan {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid black;
+    margin: 10px auto 0 auto;
+    background: lightslategray;
+}
+
+.wrapper .fan_control .fan_status .first_fan {
+    background: lightgoldenrodyellow;
+}
+
+.wrapper .fan_control .fan_status .second_fan {
+    background: lightpink;
+}
+
+.wrapper .fan_control .fan_status .third_fan {
+    background: lightgrey;
+}
+
+.wrapper .fan_control .fan_status .fourth_fan {
+    background: lightskyblue;
+}
+
+.wrapper .status {
+    background: lightblue;
+    border-right: 2px solid black;
+}
+
+.wrapper .status .power_button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    margin: 3px 0 0 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.wrapper .status .temp_button {
+    background-color: lightsalmon;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    margin: 3px 0 0 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.wrapper .status .nodes {
+    display: grid;
+    grid-template-rows: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
+    grid-template-columns: 25% 25% 25% 25%;
+    background: lightslategray;
+    border: 2px solid black;
+    margin: 5px 0 0 0;
+    height: 655px;
+}
+
+.node_1, .node_2, .node_3, .node_4, .node_5, .node_6, .node_7, .node_8, .node_9, .node_10, .node_11, .node_12, .node_13, .node_14, .node_15, .node_16, .node_17, .node_18, .node_19, .node_20, .node_21, .node_22, .node_23, .node_24, .node_25, .node_26, .node_27, .node_28, .node_29, .node_30, .node_31, .node_32 {
+    border: 1px solid white;
+    border-radius: 1em;
+}
+
+.wrapper .console {
+    background: lightgreen;
+}
+
+.wrapper .console .console_title {
+    background: lightgoldenrodyellow;
+    border-bottom: 2px solid black;
+    height: 65px;
+    font-size: 30px;
+    padding: 3px  0 0 0;
+}
+
+.wrapper .console .dropbtn {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+  
+.wrapper .console .dropdown {
+    position: relative;
+    display: inline-block;
+}
+  
+.wrapper .console .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+  
+.wrapper .console .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+  
+.wrapper .console .dropdown-content a:hover {background-color: #f1f1f1}
+  
+.wrapper .console .dropdown:hover .dropdown-content {
+    display: block;
+}
+  
+.wrapper .console .dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
+.wrapper .console .console_content {
+    background: gray;
+    color: white;
+    height: 655px;
+}
+
+.madeby {
+    height: 60px;
+    font-size: 15px;
+    text-align: center;
+    background: lightcoral;
+    border-top: 2px solid black;
+}
+
+.madeby .madeby_inner {
+    padding: 20px 0 0 0;
+    font-weight: bold;
+}

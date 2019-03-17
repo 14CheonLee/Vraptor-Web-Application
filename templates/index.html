@@ -1,16 +1,110 @@
 <!DOCTYPE html>
+<!-- 문서타입 -->
 <html lang="en">
+<!-- 휴먼랭귀지 -->
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8"> <!-- 문자셋 -->
     <title>Hello Vraptor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
-    <p>Hello Vraptor</p>
-    <div class="data">
-        {% for value in data %}
+    <header>
+        <div class="top-view">
+            <div class="logo">
+                <h1>V-Raptor</h1>
+            </div>
+            <div class="login">
+                Login
+            </div>
+        </div>
+    </header> <!-- 첫머리 -->
+    <nav>
+        <!-- sidebar 고려중... 화면이 좁아졌을경우나 모바일 환경에서 sidebar를 이용해 원하는 위치로 이동이 가능하게 만들까..? -->
+    </nav> <!-- 메뉴 -->
+    <article>
+        <div class="wrapper">
+            <div class="fan_control">
+                <div class="fan_status">
+                    <div class="first_fan">
+                        First_fan
+                        <div class="ex_fan">
+
+                        </div>
+                    </div>
+                    <div class="second_fan">
+                        Second_fan
+                        <div class="ex_fan">
+                            
+                        </div>
+                    </div>
+                    <div class="third_fan">
+                        Third_fan
+                        <div class="ex_fan">
+                            
+                        </div>
+                    </div>
+                    <div class="fourth_fan">
+                        Fourth_fan
+                        <div class="ex_fan">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="status">
+                <button class="power_button">Power</button>
+                <button class="temp_button">Temp</button>
+                <div class="nodes">
+                    <div class="node_1">Node1</div><div class="node_2">Node2</div><div class="node_3">Node3</div><div class="node_4">Node4</div>
+                    <div class="node_5">Node5</div><div class="node_6">Node6</div><div class="node_7">Node7</div><div class="node_8">Node8</div>
+                    <div class="node_9">Node9</div><div class="node_10">Node10</div><div class="node_11">Node11</div><div class="node_12">Node12</div>
+                    <div class="node_13">Node13</div><div class="node_14">Node14</div><div class="node_15">Node15</div><div class="node_16">Node16</div>
+                    <div class="node_17">Node17</div><div class="node_18">Node18</div><div class="node_19">Node19</div><div class="node_20">Node20</div>
+                    <div class="node_21">Node21</div><div class="node_22">Node22</div><div class="node_23">Node23</div><div class="node_24">Node24</div>
+                    <div class="node_25">Node25</div><div class="node_26">Node26</div><div class="node_27">Node27</div><div class="node_28">Node28</div>
+                    <div class="node_29">Node29</div><div class="node_30">Node30</div><div class="node_31">Node31</div><div class="node_32">Node32</div>
+                </div>
+            </div>
+            <div class="console">
+                <div class="console_title">
+                    <div class="dropdown">
+                        <button class="dropbtn">NodeChoice</button>
+                        <div class="dropdown-content">
+                            <a href="#">Node1</a>
+                            <a href="#">Node2</a>
+                            <a href="#">Node3</a>
+                        </div>
+                    </div>'s Console
+                </div>
+                <div class="console_content">
+                    Console
+                </div>
+            </div>
+        </div>
+        <!-- <div class="data">
+            {% for value in data %}
             <p>{{ value }}</p>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div> -->
+    </article> <!-- 본문 -->
+    <footer>
+        <div class="madeby">
+            <div class="madeby_inner">
+                캡스톤디자인 팀 : 김명수, 강석현, 이충익, 정병길, 최준호
+            </div>
+        </div>
+    </footer> <!-- 끝머리 -->
 </body>
+
 </html>
