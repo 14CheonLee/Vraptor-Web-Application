@@ -75,10 +75,15 @@ def create_account():
     json_data = json.dumps({"State": "OK"})
     return Response(json_data, status=200, mimetype="application/json")
 
+'''
+socket IO
+'''
+
+# fan controll
 
 @socketio.on('connect', namespace='/fan')
 def connect(mes):
-    url = config.INTERPRETER_URI + '/get_fan'
+    url = config.INTERPRETER_URI + '/get_fan_mode'
     # headers = {'Content-type': 'text/html; charset=UTF-8'}
     data = {'fan_id': 1}
 
@@ -89,9 +94,56 @@ def connect(mes):
     # response = requests.post(url, data=mes)
     print(mes)
     response = requests.post(url, data=data)
-
     socketio.emit('response', response)
 
+@socketio.on('set', namespace='/fan')
+def set(mes):
+    url = config.INTERPRETER_URI + '/set_fan_mode'
+    # headers = {'Content-type': 'text/html; charset=UTF-8'}
+    data = {'fan_id': 1, 'fan_mode':2}
+
+    """
+    @TODO
+    > Modify these
+    """
+    # response = requests.post(url, data=mes)
+    print(mes)
+    response = requests.post(url, data=data)
+    socketio.emit('response', response)
+
+# sensor controll
+
+@socketio.on('connect', namespace='/sensor')
+def connect(mes):
+    url = config.INTERPRETER_URI + '/get_sensor_data'
+    # headers = {'Content-type': 'text/html; charset=UTF-8'}
+    data = {'node_num': 1}
+
+    """
+    @TODO
+    > Modify these
+    """
+    # response = requests.post(url, data=mes)
+    print(mes)
+    response = requests.post(url, data=data)
+    socketio.emit('response', response)
+
+# power controll
+
+@socketio.on('handle', namespace='/pw')
+def handle(mes):
+    url = config.INTERPRETER_URI + '/run_power_tool'
+    # headers = {'Content-type': 'text/html; charset=UTF-8'}
+    data = {'tag': 'on'}
+
+    """
+    @TODO
+    > Modify these
+    """
+    # response = requests.post(url, data=mes)
+    print(mes)
+    response = requests.post(url, data=data)
+    socketio.emit('response', response)
 
 def init_db():
     # Drop tables
@@ -131,3 +183,4 @@ if __name__ == '__main__':
     activate_app()
     # app.run(port=5566, debug=True)
     socketio.run(app, host='0.0.0.0', port=5566, use_reloader=False, debug=True)
+    print("--- server start ---")
