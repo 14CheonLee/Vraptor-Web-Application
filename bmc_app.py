@@ -100,7 +100,8 @@ def message(data):
 @socketio.on('get_fan_mode', namespace='/fan')
 def get_fan_mode(data):
     print(data)
-    url = config.INTERPRETER_URI + '/get_fan_mode'
+    url = "{}://{}:{}/".format(config.INTERPRETER_PROTOCOL, config.INTERPRETER_HOST, config.INTERPRETER_PORT)
+    url += "get_fan_mode"
     # headers = {'Content-type': 'text/html; charset=UTF-8'}
     dummy_data = {'fan_id': 1}
 
@@ -118,7 +119,8 @@ def get_fan_mode(data):
 @socketio.on('set_fan_mode', namespace='/fan')
 def set_fan_mode(data):
     print(data)
-    url = config.INTERPRETER_URI + '/set_fan_mode'
+    url = "{}://{}:{}/".format(config.INTERPRETER_PROTOCOL, config.INTERPRETER_HOST, config.INTERPRETER_PORT)
+    url += "set_fan_mode"
     # headers = {'Content-type': 'text/html; charset=UTF-8'}
     dummy_data = {'fan_id': 1, 'fan_mode': 2}
 
@@ -154,7 +156,8 @@ def message(data):
 @socketio.on('get_sensor_data', namespace='/sensor')
 def get_sensor_data(data):
     print(data)
-    url = config.INTERPRETER_URI + '/get_sensor_data'
+    url = "{}://{}:{}/".format(config.INTERPRETER_PROTOCOL, config.INTERPRETER_HOST, config.INTERPRETER_PORT)
+    url += "get_sensor_data"
     # headers = {'Content-type': 'text/html; charset=UTF-8'}
     dummy_data = {'node_num': 1}
 
@@ -222,6 +225,6 @@ def activate_app():
 
 if __name__ == '__main__':
     activate_app()
-    # app.run(port=5566, debug=True)
+    # app.run(port=9001, debug=True)
     print("[ Server starting with http://{}:{} ]".format(config.HOST, config.PORT))
     socketio.run(app, host=config.HOST, port=config.PORT, use_reloader=True, debug=True)
