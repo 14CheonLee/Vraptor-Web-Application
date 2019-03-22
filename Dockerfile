@@ -5,9 +5,9 @@ MAINTAINER Byeonggil-Jung "jbkcose@gmail.com"
 RUN apt-get update -y
 RUN apt-get install -y git python3 python3-dev python3-pip build-essential
 
-RUN git clone https://github.com/14CheonLee/Vraptor-Web-Application.git
+COPY . /app
 
-WORKDIR /Vraptor-Web-Application
+WORKDIR /app
 
 RUN pip3 install -r requirements.txt
 
