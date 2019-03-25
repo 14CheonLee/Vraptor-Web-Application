@@ -109,6 +109,65 @@
     height: 655px;
 }
 
+.wrapper .status .nodes_temp {
+    display: grid;
+    grid-template-rows: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
+    grid-template-columns: 25% 25% 25% 25%;
+    background: lightpink;
+    border: 2px solid black;
+    margin: 5px 0 0 0;
+    height: 655px;
+}
+
+.wrapper .status .nodes_status {
+    display: grid;
+    grid-template-rows: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
+    grid-template-columns: 25% 25% 25% 25%;
+    background: lightseagreen;
+    border: 2px solid black;
+    margin: 5px 0 0 0;
+    height: 655px;
+}
+
+.wrapper .status .nodes_status .node_1_on {
+    border: 1px solid white;
+    border-radius: 1em;
+    background: lightskyblue;
+}
+
+.wrapper .status .nodes_status .node_1_off {
+    border: 1px solid white;
+    border-radius: 1em;
+    background: lightsalmon;
+}
+
+.wrapper .status .nodes_status .on_button {
+    background-color: white;
+    border: none;
+    color: black;
+    width: 30px;
+    height: 10px;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.wrapper .status .nodes_status .off_button {
+    background-color: black;
+    border: none;
+    color: white;
+    width: 30px;
+    height: 10px;
+    padding: 15px 32px;
+    margin: 3px 0 0 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
 .node_1, .node_2, .node_3, .node_4, .node_5, .node_6, .node_7, .node_8, .node_9, .node_10, .node_11, .node_12, .node_13, .node_14, .node_15, .node_16, .node_17, .node_18, .node_19, .node_20, .node_21, .node_22, .node_23, .node_24, .node_25, .node_26, .node_27, .node_28, .node_29, .node_30, .node_31, .node_32 {
     border: 1px solid white;
     border-radius: 1em;
