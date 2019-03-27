@@ -320,5 +320,11 @@ def checkQueue():
 if __name__ == '__main__':
     activate_app()
     # app.run(port=9001, debug=True)
+
+    # serial Communication
+    sp = serialworker.SerialProcess(input_queue, output_queue)
+    sp.daemon = True
+    sp.start()
+
     print("[ Server starting with http://{}:{} ]".format(config.HOST, config.PORT))
     socketio.run(app, host=config.HOST, port=config.PORT, use_reloader=True, debug=True)
