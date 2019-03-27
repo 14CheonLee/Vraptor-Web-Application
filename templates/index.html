@@ -18,6 +18,7 @@
         <!-- Socket -->
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/socket.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
     </head>
     <body>
         <header>
@@ -64,10 +65,52 @@
                     </div>
                 </div>
                 <div class="status">
-                    <button class="power_button">Power</button>
-                    <button class="temp_button">Temp</button>
+                    <button onclick="change_to_status()" class="power_button">Power</button>
+                    <button onclick="change_to_temp()" class="temp_button">Temp</button>
                     <div class="nodes">
-                        <div class="node_1">Node1</div><div class="node_2">Node2</div><div class="node_3">Node3</div><div class="node_4">Node4</div>
+                        <div class="node_1">Node1<br>기본초기화면</div><div class="node_2">Node2</div><div class="node_3">Node3</div><div class="node_4">Node4</div>
+                        <div class="node_5">Node5</div><div class="node_6">Node6</div><div class="node_7">Node7</div><div class="node_8">Node8</div>
+                        <div class="node_9">Node9</div><div class="node_10">Node10</div><div class="node_11">Node11</div><div class="node_12">Node12</div>
+                        <div class="node_13">Node13</div><div class="node_14">Node14</div><div class="node_15">Node15</div><div class="node_16">Node16</div>
+                        <div class="node_17">Node17</div><div class="node_18">Node18</div><div class="node_19">Node19</div><div class="node_20">Node20</div>
+                        <div class="node_21">Node21</div><div class="node_22">Node22</div><div class="node_23">Node23</div><div class="node_24">Node24</div>
+                        <div class="node_25">Node25</div><div class="node_26">Node26</div><div class="node_27">Node27</div><div class="node_28">Node28</div>
+                        <div class="node_29">Node29</div><div class="node_30">Node30</div><div class="node_31">Node31</div><div class="node_32">Node32</div>
+                    </div>
+                    <div class="nodes_temp">
+                        <div class="node_1">Node1
+                            <div class="node_deep_temp">
+                                400°C
+                            </div>
+                        </div><div class="node_2">Node2</div><div class="node_3">Node3</div><div class="node_4">Node4</div>
+                        <div class="node_5">Node5</div><div class="node_6">Node6</div><div class="node_7">Node7</div><div class="node_8">Node8</div>
+                        <div class="node_9">Node9</div><div class="node_10">Node10</div><div class="node_11">Node11</div><div class="node_12">Node12</div>
+                        <div class="node_13">Node13</div><div class="node_14">Node14</div><div class="node_15">Node15</div><div class="node_16">Node16</div>
+                        <div class="node_17">Node17</div><div class="node_18">Node18</div><div class="node_19">Node19</div><div class="node_20">Node20</div>
+                        <div class="node_21">Node21</div><div class="node_22">Node22</div><div class="node_23">Node23</div><div class="node_24">Node24</div>
+                        <div class="node_25">Node25</div><div class="node_26">Node26</div><div class="node_27">Node27</div><div class="node_28">Node28</div>
+                        <div class="node_29">Node29</div><div class="node_30">Node30</div><div class="node_31">Node31</div><div class="node_32">Node32</div>
+                    </div>
+                    <div class="nodes_status">
+                        <div class="node_1">Node1
+                            <div class="node_deep_status">
+                                <button onclick="status_on()" class="on_button"></button>
+                                <button onclick="status_off()" class="off_button"></button>
+                            </div>
+                        </div>
+                        <div class="node_1_on">Node1
+                            <div class="node_deep_status">
+                                <button onclick="status_on()" class="on_button"></button>
+                                <button onclick="status_off()" class="off_button"></button>
+                            </div>
+                        </div>
+                        <div class="node_1_off">Node1
+                            <div class="node_deep_status">
+                                <button onclick="status_on()" class="on_button"></button>
+                                <button onclick="stauts_off()" class="off_button"></button>
+                            </div>
+                        </div>
+                        <div class="node_2">Node2</div><div class="node_3">Node3</div><div class="node_4">Node4</div>
                         <div class="node_5">Node5</div><div class="node_6">Node6</div><div class="node_7">Node7</div><div class="node_8">Node8</div>
                         <div class="node_9">Node9</div><div class="node_10">Node10</div><div class="node_11">Node11</div><div class="node_12">Node12</div>
                         <div class="node_13">Node13</div><div class="node_14">Node14</div><div class="node_15">Node15</div><div class="node_16">Node16</div>

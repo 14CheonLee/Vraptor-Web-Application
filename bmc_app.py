@@ -1,13 +1,31 @@
+# configuration
+import eventlet
+eventlet.monkey_patch()
+
 from flask import Flask, render_template, session, Response, request
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy, inspect
 
 import requests, json
 import config
+import multiprocessing
+import os
+import time
+import subprocess
+import serialworker
+from threading import Thread
+
+# global value
 
 app = Flask(__name__)
 app.secret_key = "secret"
 socketio = SocketIO(app)
+thread = None
+threadRunning = False
+sp = None
+
+input_queue = [multiprocessing.Queue(), multiprocessing.Queue()]
+output_queue = [multiprocessing.Queue(), multiprocessing.Queue()]
 
 # DB
 """
@@ -19,6 +37,17 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Should change it
 
 db = SQLAlchemy(app)
 
+# console part
+
+def runPowerTool(args):
+    '''
+    @TODO
+    '''
+    # cmd = ['/usr/bin/powertool'] + args
+    # fd = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout
+    # data = fd.read()
+    # fd.close()
+    # return data
 
 class Account(db.Model):
     __tablename__ = "account"
@@ -171,6 +200,58 @@ def get_sensor_data(data):
 
     emit('response', res_data)
 
+# console
+@socketio.on('connect', namespace='/term')
+def connect():
+    global thread
+    global threadRunning
+    print('term-socket : connected')
+    if thread is None:
+        threadRunning = True
+        thread = Thread(target=checkQueue)
+        thread.start()
+    '''
+    @TODO
+    > after develope runPowerTool funtion
+    '''
+    # result = runPowerTool(['consolestat'])
+    # result1 = result.split('\n')[0].split(':')[1]
+    # result2 = result.split('\n')[1].split(':')[1]
+    # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/term')
+
+@socketio.on('setting', namespace='/term')
+def term_setup(message):
+    '''
+    @TODO
+    >> after develop runPowerTool funtion
+    >> after define data dictionary
+    '''
+    # print(str(message['node']) + ":" + message['cmd'].encode("utf-8"));
+    # n = message['node']
+    # if n == 0 or n == 1:
+    #     node = str(n+1)
+    #     cmd = message['cmd'].encode("utf-8")
+    #     if cmd == 'on':
+    #         runPowerTool(['consoleon', node])
+    #     elif cmd == 'off':
+    #         runPowerTool(['consoleoff', node])
+    # result = runPowerTool(['consolestat'])
+    # result1 = result.split('\n')[0].split(':')[1]
+    # result2 = result.split('\n')[1].split(':')[1]
+    # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/term')
+
+@socketio.on('disconnect', namespace='/term')
+def disconnect():
+    global thread
+    global threadRunning
+    if thread is not None:
+        threadRunning = False
+        thread = None
+
+@socketio.on('input', namespace='/term')
+def term_input(message):
+    #print('input:' + str(message['node']) + message['data'].encode("utf-8"))
+    input_queue[message['node']].put(message['data'].encode("UTF-8"))
 
 # # power controll
 # @socketio.on('handle', namespace='/pw')
@@ -222,6 +303,19 @@ def activate_app():
     init_db()
     print("> Finished setting configures ...")
 
+# console check
+def checkQueue():
+    global threadRunning
+    while threadRunning:
+        time.sleep(0.001)
+        for node in range(2):
+            if not output_queue[node].empty():
+                message = output_queue[node].get()
+                #print("send: " + message)
+                socketio.emit("output", {'node':node,'buf':message}, namespace='/term')
+                eventlet.sleep(0)
+        if not sp.is_alive():
+            break
 
 if __name__ == '__main__':
     activate_app()
