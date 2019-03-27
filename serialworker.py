@@ -27,11 +27,11 @@ class SerialProcess(multiprocessing.Process):
         return self.sp[node].read()
  
     def run(self):
- 
-    	self.sp[0].flushInput()
-    	self.sp[1].flushInput()
- 
-        while True:
+    	
+        self.sp[0].flushInput()
+        self.sp[1].flushInput()
+        
+        while True :
             time.sleep(0.001)
             for node in range(2):
                 if not self.input_queue[node].empty():
