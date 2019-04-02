@@ -19,6 +19,7 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/socket.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     </head>
     <body>
         <header>
@@ -29,7 +30,36 @@
                 <div class="login">
                     Login
                 </div>
-            </div>
+                <button onclick="console_click()" class="console_button"><a href="#layer2" class="btn-example">Console</a></button>
+                    <div class="dim-layer">
+                        <div class="dimBg"></div>
+                        <div id="layer2" class="pop-layer">
+                            <div class="pop-container">
+                                <div class="pop-conts">
+                                    <div class="console">
+                                        <div class="console_title">
+                                            <div class="dropdown">
+                                                <button class="dropbtn">NodeChoice</button>
+                                                <div class="dropdown-content">
+                                                    <a href="#">Node1</a>
+                                                    <a href="#">Node2</a>
+                                                    <a href="#">Node3</a>
+                                                </div>
+                                            </div>'s Console
+                                        </div>
+                                        <div class="console_content">
+                                            Console
+                                        </div>
+                                    </div>
+                                    <div class="btn-r">
+                                        <a href="#" class="btn-layerClose">Close</a>
+                                    </div>
+                                    <!--// content-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </header> <!-- 첫머리 -->
         <nav>
             <!-- sidebar 고려중... 화면이 좁아졌을경우나 모바일 환경에서 sidebar를 이용해 원하는 위치로 이동이 가능하게 만들까..? -->
@@ -120,21 +150,7 @@
                         <div class="node_29">Node29</div><div class="node_30">Node30</div><div class="node_31">Node31</div><div class="node_32">Node32</div>
                     </div>
                 </div>
-                <div class="console">
-                    <div class="console_title">
-                        <div class="dropdown">
-                            <button class="dropbtn">NodeChoice</button>
-                            <div class="dropdown-content">
-                                <a href="#">Node1</a>
-                                <a href="#">Node2</a>
-                                <a href="#">Node3</a>
-                            </div>
-                        </div>'s Console
-                    </div>
-                    <div class="console_content">
-                        Console
-                    </div>
-                </div>
+                
             </div>
             <!-- <div class="data">
                 {% for value in data %}
