@@ -126,40 +126,45 @@ def message(data):
     emit("response", {"data": "[Socket_Fan] {}".format(data)})
 
 
-@socketio.on('get_fan_mode', namespace='/fan')
-def get_fan_mode(data):
-    print(data)
-    url = "{}://{}:{}/".format(config.INTERPRETER_PROTOCOL, config.INTERPRETER_HOST, config.INTERPRETER_PORT)
-    url += "get_fan_mode"
-    # headers = {'Content-type': 'text/html; charset=UTF-8'}
-    dummy_data = {'fan_id': 1}
+@socketio.on('set_fan_speed', namespace='/fan')
+def set_fan_speed(data):
+    headers = dict()
+    form_data = dict()
+    url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
+                                     config.INTERPRETER_HOST,
+                                     config.INTERPRETER_PORT,
+                                     config.INTERPRETER_NAME,
+                                     config.CATEGORY_FAN)
+    url += "set_speed"
 
-    """
-    @TODO
-    > Modify these
-    """
-    # response = requests.post(url, data=mes)
-    response = requests.post(url, data=dummy_data)
-    res_data = response.text
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    headers['Accept'] = 'application/json'
+    form_data['fan_number'] = data["fan_number"]
+    form_data['speed'] = data["speed"]
+
+    response = requests.post(url, headers=headers, data=form_data)
+    res_data = json.loads(response.text)
 
     emit("response", res_data)
 
 
 @socketio.on('set_fan_mode', namespace='/fan')
 def set_fan_mode(data):
-    print(data)
-    url = "{}://{}:{}/".format(config.INTERPRETER_PROTOCOL, config.INTERPRETER_HOST, config.INTERPRETER_PORT)
-    url += "set_fan_mode"
-    # headers = {'Content-type': 'text/html; charset=UTF-8'}
-    dummy_data = {'fan_id': 1, 'fan_mode': 2}
+    headers = dict()
+    form_data = dict()
+    url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
+                                     config.INTERPRETER_HOST,
+                                     config.INTERPRETER_PORT,
+                                     config.INTERPRETER_NAME,
+                                     config.CATEGORY_FAN)
+    url += "set_auto_switch"
 
-    """
-    @TODO
-    > Modify these
-    """
-    # response = requests.post(url, data=mes)
-    response = requests.post(url, data=dummy_data)
-    res_data = response.text
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    headers['Accept'] = 'application/json'
+    form_data['fan_auto_switch'] = data["fan_auto_switch"]
+
+    response = requests.post(url, headers=headers, data=form_data)
+    res_data = json.loads(response.text)
 
     emit('response', res_data)
 
@@ -182,21 +187,19 @@ def message(data):
     emit("response", {"data": "[Socket_Sensor] {}".format(data)})
 
 
-@socketio.on('get_sensor_data', namespace='/sensor')
-def get_sensor_data(data):
+@socketio.on('get_all_data', namespace='/sensor')
+def get_all_data(data):
     print(data)
-    url = "{}://{}:{}/".format(config.INTERPRETER_PROTOCOL, config.INTERPRETER_HOST, config.INTERPRETER_PORT)
-    url += "get_sensor_data"
-    # headers = {'Content-type': 'text/html; charset=UTF-8'}
-    dummy_data = {'node_num': 1}
+    url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
+                                     config.INTERPRETER_HOST,
+                                     config.INTERPRETER_PORT,
+                                     config.INTERPRETER_NAME,
+                                     config.CATEGORY_SENSOR)
+    url += "get_all_data"
 
-    """
-    @TODO
-    > Modify these
-    """
-    # response = requests.post(url, data=mes)
-    response = requests.post(url, data=dummy_data)
-    res_data = response.text
+    headers = {'Accept': 'application/json'}
+    response = requests.get(url, headers=headers)
+    res_data = json.loads(response.text)
 
     emit('response', res_data)
 
@@ -297,7 +300,7 @@ def init_db():
     print("> Completed inserting dummy data to db")
 
 
-# Before run app, configuring settings
+# Before running app, configure settings
 def activate_app():
     print("> Start setting configures ...")
     init_db()

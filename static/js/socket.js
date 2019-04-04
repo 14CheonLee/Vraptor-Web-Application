@@ -36,19 +36,27 @@ $(document).ready(function() {
         socket_sensor.emit("message", {data: "Clicked sensor button"});
     });
 
-    $("#get_fan_mode_btn").click(function() {
+    $("#set_fan_speed_btn").click(function() {
         /**
          * @TODO
          * Should modify data
          */
-        socket_fan.emit("get_fan_mode", {fan_id: 1});
+        socket_fan.emit("set_fan_speed", {fan_number: 3, speed: 200});
     });
 
-    $("#get_sensor_data_btn").click(function() {
+    $("#set_fan_mode_btn").click(function() {
         /**
          * @TODO
          * Should modify data
          */
-        socket_sensor.emit("get_sensor_data", {nude_num: 1});
+        socket_fan.emit("set_fan_mode", {fan_auto_switch: true});
+    });
+
+    $("#get_all_data_btn").click(function() {
+        /**
+         * @TODO
+         * Should modify data
+         */
+        socket_sensor.emit("get_all_data");
     });
 });
