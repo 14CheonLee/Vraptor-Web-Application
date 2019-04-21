@@ -188,8 +188,7 @@ def message(data):
 
 
 @socketio.on('get_all_data', namespace='/sensor')
-def get_all_data(data):
-    print(data)
+def get_all_data():
     url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
                                      config.INTERPRETER_HOST,
                                      config.INTERPRETER_PORT,
