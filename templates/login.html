@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Login</title>
+        <script type="text/javascript">
+            function create_account_btn() {
+                window.location.replace("/account/create")
+            }
+        </script>
+    </head>
+    <body>
+        <form action="/account/login" method="post">
+            id : <input type="text" name="user_id" placeholder="ID"/>
+            pw : <input type="password" name="user_pw" placeholder="Password"/>
+             <input type="submit" value="Login"/>
+        </form>
+        <button id="create_account_btn" onclick="create_account_btn()">Create Account</button>
+    </body>
+</html>

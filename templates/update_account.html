@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Modifying Account</title>
+    </head>
+    <body>
+        <form action="/account/update_query" method="post">
+            id : <input type="text" name="user_id" placeholder="{{ data["user_id"] }}"/>
+            pw : <input type="password" name="user_pw" placeholder="****"/>
+            email : <input type="text" name="email" placeholder="{{ data["email"] }}"/>
+            position : <label>{{ data["position"] }}</label>
+            <input type="submit" value="Modify"/>
+        </form>
+    </body>
+</html>

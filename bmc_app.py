@@ -2,7 +2,7 @@
 import eventlet
 eventlet.monkey_patch()
 
-from flask import Flask, render_template, session, Response, request
+from flask import Flask, render_template, session, Response, request, redirect
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy, inspect
 
@@ -18,7 +18,6 @@ from threading import Thread
 # global value
 
 app = Flask(__name__)
-app.secret_key = "secret"
 socketio = SocketIO(app)
 thread = None
 threadRunning = False
@@ -37,17 +36,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Should change it
 
 db = SQLAlchemy(app)
 
-# console part
-
-def runPowerTool(args):
-    '''
-    @TODO
-    '''
-    # cmd = ['/usr/bin/powertool'] + args
-    # fd = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout
-    # data = fd.read()
-    # fd.close()
-    # return data
 
 class Account(db.Model):
     __tablename__ = "account"
@@ -71,38 +59,109 @@ class Account(db.Model):
 
 @app.route('/')
 def index():
-    data = ["Value 1"]
-    return render_template("index.html", data=data)
+    if session.get("account_id") is not None:
+        return render_template("index.html")
+    else:
+        return render_template("login.html")
 
 
-@app.route('/account/get_account_data', methods=["POST"])
-def get_account_data():
+@app.route('/account/login', methods=["POST"])
+def login():
     user_id = request.form["user_id"]
     user_pw = request.form["user_pw"]
-    result_dict = dict()
 
-    data = db.session.query(Account).filter(Account.user_id == user_id).filter(Account.user_pw == user_pw).one()
+    try:
+        record = db.session.query(Account).filter(Account.user_id == user_id).filter(Account.user_pw == user_pw).one()
 
-    result_dict["user_id"] = data.user_id
-    result_dict["user_pw"] = data.user_pw
-    result_dict["position"] = data.position
-    result_dict["email"] = data.email
+        session["account_id"] = record.id
+        session["user_id"] = record.user_id
 
-    json_data = json.dumps(result_dict)
+        return redirect("/", code=302)
 
-    return Response(json_data, status=200, mimetype="application/json")
+    except:
+        return redirect("/", code=302)
 
 
-@app.route('/account/create_account', methods=["POST"])
-def create_account():
+@app.route('/account/logout', methods=["GET"])
+def logout():
+    session["account_id"] = None
+
+    return redirect("/", code=302)
+
+
+@app.route('/account/create', methods=["GET"])
+def create():
+    return render_template("create_account.html")
+
+
+@app.route('/account/update', methods=["GET"])
+def update():
+    account_id = session["account_id"]
+    account_data = dict()
+
+    try:
+        record = db.session.query(Account).filter(Account.id == account_id).one()
+
+        account_data["user_id"] = record.user_id
+        account_data["user_pw"] = record.user_pw
+        account_data["position"] = record.position
+        account_data["email"] = record.email
+
+        return render_template("update_account.html", data=account_data)
+
+    except:
+        return render_template("error.html")
+
+
+@app.route('/account/create_query', methods=["POST"])
+def create_query():
     user_id = request.form["user_id"]
     user_pw = request.form["user_pw"]
     email = request.form["email"]
 
-    db.session.add(Account(user_id=user_id, user_pw=user_pw, position="user", email=email))
+    try:
+        db.session.add(Account(user_id=user_id, user_pw=user_pw, position="user", email=email))
+        db.session.commit()
 
-    json_data = json.dumps({"State": "OK"})
-    return Response(json_data, status=200, mimetype="application/json")
+        return redirect("/", code=302)
+
+    except:
+        return redirect("/", code=302)
+
+
+@app.route('/account/update_query', methods=["POST"])
+def update_query():
+    update_dict = dict()
+    account_id = session["account_id"]
+
+    update_dict["user_id"] = request.form["user_id"]
+    update_dict["user_pw"] = request.form["user_pw"]
+    update_dict["email"] = request.form["email"]
+
+    try:
+        db.session.query(Account).filter(Account.id == account_id).update(update_dict)
+        db.session.commit()
+
+        session["user_id"] = request.form["user_id"]
+
+        return redirect("/", code=302)
+
+    except:
+        return redirect("/", code=302)
+
+
+'''
+Terminal Console
+'''
+def runPowerTool(args):
+    '''
+    @TODO
+    '''
+    # cmd = ['/usr/bin/powertool'] + args
+    # fd = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout
+    # data = fd.read()
+    # fd.close()
+    # return data
 
 
 '''
@@ -320,6 +379,7 @@ def checkQueue():
             break
 
 if __name__ == '__main__':
+    app.secret_key = os.urandom(12)
     activate_app()
     # app.run(port=9001, debug=True)
 

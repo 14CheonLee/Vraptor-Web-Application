@@ -27,8 +27,12 @@
                 <div class="logo">
                     <h1>V-Raptor</h1>
                 </div>
-                <div class="login">
-                    Login
+                <!-- 이 부분 추가했음 누르면 계정 수정하는 페이지로 redirect 하게끔 -->
+                <div class="account">
+                    <a href="/account/update">{{ session["user_id"] }}</a>
+                </div>
+                <div class="logout">
+                    <a href="/account/logout">Logout</a>
                 </div>
                 <button onclick="console_click()" class="console_button"><a href="#layer2" class="btn-example">Console</a></button>
                     <div class="dim-layer">
