@@ -1,10 +1,11 @@
-# configuration
 import eventlet
 eventlet.monkey_patch()
 
 from flask import Flask, render_template, session, Response, request, redirect
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy, inspect
+from threading import Thread
+
 
 import requests, json
 import config
@@ -13,18 +14,18 @@ import os
 import time
 import subprocess
 import serialworker
-from threading import Thread
 
-# global value
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+# Global values
 thread = None
 threadRunning = False
 sp = None
 
-input_queue = [multiprocessing.Queue(), multiprocessing.Queue()]
-output_queue = [multiprocessing.Queue(), multiprocessing.Queue()]
+input_queue = [multiprocessing.Queue() for _ in range(config.NODE_NUM)]
+output_queue = [multiprocessing.Queue() for _ in range(config.NODE_NUM)]
 
 # DB
 """
@@ -151,7 +152,7 @@ def update_query():
 
 
 '''
-Terminal Console
+Checking Power of Nodes
 '''
 def runPowerTool(args):
     '''
@@ -261,27 +262,50 @@ def get_all_data():
 
     emit('response', res_data)
 
-# console
-@socketio.on('connect', namespace='/term')
+
+# Console
+@socketio.on('connect', namespace='/console')
 def connect():
     global thread
     global threadRunning
-    print('term-socket : connected')
+
     if thread is None:
         threadRunning = True
-        thread = Thread(target=checkQueue)
+        thread = Thread(target=send_console_message)
         thread.start()
-    '''
-    @TODO
-    > after develope runPowerTool funtion
-    '''
+
+    print("[Socket_Console] Connected")
+    emit("response", {"data": "[Socket_Console] Connected"})
+
     # result = runPowerTool(['consolestat'])
     # result1 = result.split('\n')[0].split(':')[1]
     # result2 = result.split('\n')[1].split(':')[1]
-    # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/term')
+    # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/console')
 
-@socketio.on('setting', namespace='/term')
-def term_setup(message):
+
+@socketio.on('disconnect', namespace='/console')
+def disconnect():
+    global thread
+    global threadRunning
+
+    if thread is not None:
+        threadRunning = False
+        thread = None
+
+    print("[Socket_Console] Disconnected")
+
+
+@socketio.on("send", namespace='/console')
+def send(data):
+    node_number = data["node_number"]
+    cmd = data["cmd"] + "\n"
+
+    input_queue[node_number].put(cmd.encode("UTF-8"))
+
+
+@socketio.on('setting', namespace='/console')
+def console_setup(message):
+    pass
     '''
     @TODO
     >> after develop runPowerTool funtion
@@ -299,20 +323,13 @@ def term_setup(message):
     # result = runPowerTool(['consolestat'])
     # result1 = result.split('\n')[0].split(':')[1]
     # result2 = result.split('\n')[1].split(':')[1]
-    # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/term')
+    # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/console')
 
-@socketio.on('disconnect', namespace='/term')
-def disconnect():
-    global thread
-    global threadRunning
-    if thread is not None:
-        threadRunning = False
-        thread = None
 
-@socketio.on('input', namespace='/term')
-def term_input(message):
-    #print('input:' + str(message['node']) + message['data'].encode("utf-8"))
-    input_queue[message['node']].put(message['data'].encode("UTF-8"))
+# @socketio.on('input', namespace='/console')
+# def console_input(message):
+#     #print('input:' + str(message['node']) + message['data'].encode("utf-8"))
+#     input_queue[message['node']].put(message['data'].encode("UTF-8"))
 
 # # power controll
 # @socketio.on('handle', namespace='/pw')
@@ -331,6 +348,27 @@ def term_input(message):
 #     socketio.emit('response', response)
 
 
+# Send console messages
+def send_console_message():
+    global output_queue
+    global threadRunning
+    global sp
+
+    while threadRunning:
+        time.sleep(0.001)
+        for node_number in range(config.NODE_NUM):
+            if not output_queue[node_number].empty():
+                message_ = output_queue[node_number].get()
+                # print("send: " + message)
+
+                socketio.emit("receive", {"node_number": node_number, "message": message_}, namespace='/console')
+                eventlet.sleep(0)
+
+        if not sp.is_alive():
+            break
+
+
+# Initiate
 def init_db():
     # Drop tables
     ins = inspect(db.engine)
@@ -358,35 +396,28 @@ def init_db():
     print("> Completed inserting dummy data to db")
 
 
+def init_serial_communication():
+    global sp
+    global input_queue
+    global output_queue
+
+    sp = serialworker.SerialProcess(input_queue, output_queue)
+    sp.daemon = True
+    sp.start()
+    print("> Completed running serial process")
+
+
 # Before running app, configure settings
 def activate_app():
     print("> Start setting configures ...")
     init_db()
+    init_serial_communication()
     print("> Finished setting configures ...")
 
-# console check
-def checkQueue():
-    global threadRunning
-    while threadRunning:
-        time.sleep(0.001)
-        for node in range(2):
-            if not output_queue[node].empty():
-                message = output_queue[node].get()
-                #print("send: " + message)
-                socketio.emit("output", {'node':node,'buf':message}, namespace='/term')
-                eventlet.sleep(0)
-        if not sp.is_alive():
-            break
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(12)
     activate_app()
-    # app.run(port=9001, debug=True)
 
-    # serial Communication
-    # sp = serialworker.SerialProcess(input_queue, output_queue)
-    # sp.daemon = True
-    # sp.start()
-
-    print("[ Server starting with http://{}:{} ]".format(config.HOST, config.PORT))
-    socketio.run(app, host=config.HOST, port=config.PORT, use_reloader=True, debug=True)
+    print("[ Starting server with {}://{}:{} ]".format(config.PROTOCOL, config.HOST, config.PORT))
+    socketio.run(app, host=config.HOST, port=config.PORT, use_reloader=False, debug=True)

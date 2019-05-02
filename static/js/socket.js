@@ -8,8 +8,12 @@
 $(document).ready(function() {
     let socket_fan = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/fan");
     let socket_sensor = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/sensor");
+    let socket_console = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/console");
 
-    // Fan
+    /**
+     * Checking Connection
+     */
+    // Fan socket
     socket_fan.on("connect", function() {
         socket_fan.emit("message", {data: "[Socket_Fan] Connected ..."});
     });
@@ -18,7 +22,7 @@ $(document).ready(function() {
         console.log(msg);
     });
 
-    // Sensor
+    // Sensor socket
     socket_sensor.on("connect", function() {
         socket_sensor.emit("message", {data: "[Socket_Sensor] Connected ..."});
     });
@@ -27,7 +31,19 @@ $(document).ready(function() {
         console.log(msg);
     });
 
-    // If click the button
+    // Console socket
+    socket_console.on("connect", function() {
+        socket_console.emit("message", {data: "[Socket_Console] Connected ..."});
+    });
+
+    socket_console.on("response", function(msg) {
+        console.log(msg);
+    });
+
+    /**
+     * Test
+     */
+    // (Test) If click the button
     $("#fan_btn").click(function() {
         socket_fan.emit("message", {data: "Clicked fan button"});
     });
@@ -36,6 +52,10 @@ $(document).ready(function() {
         socket_sensor.emit("message", {data: "Clicked sensor button"});
     });
 
+    /**
+     * Sensor & Fan data
+     */
+    // Fan
     $("#set_fan_speed_btn").click(function() {
         /**
          * @TODO
@@ -52,11 +72,24 @@ $(document).ready(function() {
         socket_fan.emit("set_fan_mode", {fan_auto_switch: true});
     });
 
+    // Sensor
     $("#get_all_data_btn").click(function() {
         /**
          * @TODO
          * Should modify data
          */
         socket_sensor.emit("get_all_data");
+    });
+
+    /**
+     * Console
+     */
+    // Console
+    $(".console_send_button").click(function() {
+        socket_console.emit("send", {node_number: 0, cmd: $(".console_command").val()});
+    });
+
+    socket_console.on("receive", function(message) {
+        console.log(message);
     });
 });

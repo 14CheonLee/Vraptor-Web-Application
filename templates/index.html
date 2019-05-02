@@ -27,7 +27,7 @@
                 <div class="logo">
                     <h1>V-Raptor</h1>
                 </div>
-                <!-- 이 부분 추가했음 누르면 계정 수정하는 페이지로 redirect 하게끔 -->
+                <!-- (bk) 이 부분 추가했음 누르면 계정 수정하는 페이지로 redirect 하게끔 -->
                 <div class="account">
                     <a href="/account/update">{{ session["user_id"] }}</a>
                 </div>
@@ -55,6 +55,13 @@
                                             Console
                                         </div>
                                     </div>
+
+                                    <!-- (bk) 이 부분 추가했음 console input 부분하고 보내기 버튼 (노드# 를 따로 id 로 받을 수 없나 ?) -->
+                                    <div class="console_input">
+                                        <input type="text" class="console_command"/>
+                                        <button class="console_send_button">Send</button>
+                                    </div>
+
                                     <div class="btn-r">
                                         <a href="#" class="btn-layerClose">Close</a>
                                     </div>
@@ -154,7 +161,7 @@
                         <div class="node_29">Node29</div><div class="node_30">Node30</div><div class="node_31">Node31</div><div class="node_32">Node32</div>
                     </div>
                 </div>
-                
+
             </div>
             <!-- <div class="data">
                 {% for value in data %}
