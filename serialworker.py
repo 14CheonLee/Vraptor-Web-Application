@@ -39,7 +39,7 @@ class SerialProcess(multiprocessing.Process):
         # self.sp[0].flushInput()
         # self.sp[1].flushInput()
 
-        while True :
+        while True:
             time.sleep(0.001)
 
             # for node in range(config.NODE_NUM):

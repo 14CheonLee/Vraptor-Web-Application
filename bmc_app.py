@@ -20,12 +20,17 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 # Global values
-thread = None
-threadRunning = False
-sp = None
+thread_sensor = None
+is_thread_sensor_running = False
+thread_console = None
+is_thread_console_running = False
 
-input_queue = [multiprocessing.Queue() for _ in range(config.NODE_NUM)]
-output_queue = [multiprocessing.Queue() for _ in range(config.NODE_NUM)]
+serial_process = None
+sensor_process = None
+
+node_input_queue = [multiprocessing.Queue() for _ in range(config.NODE_NUM)]
+node_output_queue = [multiprocessing.Queue() for _ in range(config.NODE_NUM)]
+sensor_output_queue = multiprocessing.Queue()
 
 # DB
 """
@@ -177,7 +182,7 @@ def connect():
 
 @socketio.on('disconnect', namespace='/fan')
 def disconnect():
-    print("[Socket_FaN] Disconnected")
+    print("[Socket_Fan] Disconnected")
 
 
 @socketio.on('message', namespace='/fan')
@@ -232,12 +237,25 @@ def set_fan_mode(data):
 # Sensor
 @socketio.on('connect', namespace='/sensor')
 def connect():
+    global thread_sensor, is_thread_sensor_running
+
+    if thread_sensor is None:
+        is_thread_sensor_running = True
+        thread_sensor = Thread(target=send_sensor_data)
+        thread_sensor.start()
+
     print("[Socket_Sensor] Connected")
     emit("response", {"data": "[Socket_Sensor] Connected"})
 
 
 @socketio.on('disconnect', namespace='/sensor')
 def disconnect():
+    global thread_sensor, is_thread_sensor_running
+
+    if thread_sensor is not None:
+        is_thread_sensor_running = False
+        thread_sensor = None
+
     print("[Socket_Sensor] Disconnected")
 
 
@@ -247,32 +265,15 @@ def message(data):
     emit("response", {"data": "[Socket_Sensor] {}".format(data)})
 
 
-@socketio.on('get_all_data', namespace='/sensor')
-def get_all_data():
-    url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
-                                     config.INTERPRETER_HOST,
-                                     config.INTERPRETER_PORT,
-                                     config.INTERPRETER_NAME,
-                                     config.CATEGORY_SENSOR)
-    url += "get_all_data"
-
-    headers = {'Accept': 'application/json'}
-    response = requests.get(url, headers=headers)
-    res_data = json.loads(response.text)
-
-    emit('response', res_data)
-
-
 # Console
 @socketio.on('connect', namespace='/console')
 def connect():
-    global thread
-    global threadRunning
+    global thread_console, is_thread_console_running
 
-    if thread is None:
-        threadRunning = True
-        thread = Thread(target=send_console_message)
-        thread.start()
+    if thread_console is None:
+        is_thread_console_running = True
+        thread_console = Thread(target=send_console_message)
+        thread_console.start()
 
     print("[Socket_Console] Connected")
     emit("response", {"data": "[Socket_Console] Connected"})
@@ -285,22 +286,23 @@ def connect():
 
 @socketio.on('disconnect', namespace='/console')
 def disconnect():
-    global thread
-    global threadRunning
+    global thread_console, is_thread_console_running
 
-    if thread is not None:
-        threadRunning = False
-        thread = None
+    if thread_console is not None:
+        is_thread_console_running = False
+        thread_console = None
 
     print("[Socket_Console] Disconnected")
 
 
 @socketio.on("send", namespace='/console')
 def send(data):
+    global node_input_queue
+
     node_number = data["node_number"]
     cmd = data["cmd"] + "\n"
 
-    input_queue[node_number].put(cmd.encode("UTF-8"))
+    node_input_queue[node_number].put(cmd.encode("UTF-8"))
 
 
 @socketio.on('setting', namespace='/console')
@@ -326,11 +328,6 @@ def console_setup(message):
     # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/console')
 
 
-# @socketio.on('input', namespace='/console')
-# def console_input(message):
-#     #print('input:' + str(message['node']) + message['data'].encode("utf-8"))
-#     input_queue[message['node']].put(message['data'].encode("UTF-8"))
-
 # # power controll
 # @socketio.on('handle', namespace='/pw')
 # def handle(mes):
@@ -348,23 +345,57 @@ def console_setup(message):
 #     socketio.emit('response', response)
 
 
+# Call sensor data
+def call_sensor_data(output_queue):
+    url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
+                                     config.INTERPRETER_HOST,
+                                     config.INTERPRETER_PORT,
+                                     config.INTERPRETER_NAME,
+                                     config.CATEGORY_SENSOR)
+    url += "get_all_data"
+
+    headers = {'Accept': 'application/json'}
+
+    while True:
+        time.sleep(config.SENSOR_DATA_CALL_TIME)
+
+        response = requests.get(url, headers=headers)
+        res_data = json.loads(response.text)
+
+        output_queue.put(res_data)
+
+
 # Send console messages
 def send_console_message():
-    global output_queue
-    global threadRunning
-    global sp
+    global node_output_queue, is_thread_console_running, serial_process
 
-    while threadRunning:
-        time.sleep(0.001)
+    while is_thread_console_running:
+        time.sleep(config.CONSOLE_READ_TIME)
         for node_number in range(config.NODE_NUM):
-            if not output_queue[node_number].empty():
-                message_ = output_queue[node_number].get()
+            if not node_output_queue[node_number].empty():
+                message_ = node_output_queue[node_number].get()
                 # print("send: " + message)
 
                 socketio.emit("receive", {"node_number": node_number, "message": message_}, namespace='/console')
                 eventlet.sleep(0)
 
-        if not sp.is_alive():
+        if not serial_process.is_alive():
+            break
+
+
+# Send sensor data
+def send_sensor_data():
+    global sensor_output_queue, is_thread_sensor_running, sensor_process
+
+    while is_thread_sensor_running:
+        time.sleep(config.SENSOR_DATA_SEND_TIME)
+
+        if not sensor_output_queue.empty():
+            sensor_data = sensor_output_queue.get()
+
+            socketio.emit("response", sensor_data, namespace='/sensor')
+
+        if not sensor_process.is_alive():
             break
 
 
@@ -396,22 +427,30 @@ def init_db():
     print("> Completed inserting dummy data to db")
 
 
-def init_serial_communication():
-    global sp
-    global input_queue
-    global output_queue
+def init_serial_process():
+    global serial_process, node_input_queue, node_output_queue
 
-    sp = serialworker.SerialProcess(input_queue, output_queue)
-    sp.daemon = True
-    sp.start()
+    serial_process = serialworker.SerialProcess(node_input_queue, node_output_queue)
+    serial_process.daemon = True
+    serial_process.start()
     print("> Completed running serial process")
+
+
+def init_sensor_process():
+    global sensor_process, sensor_output_queue
+
+    sensor_process = multiprocessing.Process(target=call_sensor_data, args=(sensor_output_queue, ))
+    sensor_process.daemon = True
+    sensor_process.start()
+    print("> Completed running sensor process")
 
 
 # Before running app, configure settings
 def activate_app():
     print("> Start setting configures ...")
     init_db()
-    init_serial_communication()
+    init_sensor_process()
+    init_serial_process()
     print("> Finished setting configures ...")
 
 
