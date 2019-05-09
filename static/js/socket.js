@@ -83,13 +83,32 @@ $(document).ready(function() {
 
     /**
      * Console
+     * @TODO
+     * Should modify node_number
      */
-    // Console
+    $(".console_choice").click(function() {
+        socket_console.emit("check", {node_number: 0});
+    });
+
+    $("#console_close").click(function() {
+        socket_console.emit("close", {node_number: 0});
+    });
+
     $(".console_send_button").click(function() {
         socket_console.emit("send", {node_number: 0, cmd: $(".console_command").val()});
     });
 
     socket_console.on("receive", function(message) {
         console.log(message);
+    });
+
+    socket_console.on("check_console", function(message) {
+        let node_number = message["node_number"];
+        let is_use = message["is_use"];
+
+        // If somebody uses console
+        if (is_use == true) {
+            alert("Somebody uses the console - Node Number : " + node_number);
+        }
     });
 });
