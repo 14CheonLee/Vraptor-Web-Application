@@ -15,6 +15,11 @@ import time
 import subprocess
 import serialworker
 
+NODE_NUM = 32
+isnodeuse = []
+
+for i in range(0,NODE_NUM):
+    isnodeuse.append(False)
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -304,6 +309,32 @@ def send(data):
 
     node_input_queue[node_number].put(cmd.encode("UTF-8"))
 
+@socketio.on("check", namespace='/console')
+def check(data):
+    global isnodeuse
+    node_number = data["node_number"]
+    if isnodeuse[node_number] == True :
+        print("node" + node_number + "inuse")
+        emit("response", {"data": "node" + node_number + "in use"})
+        '''
+        @# TODO:
+        >> landing reject page
+        '''
+    else :
+        print("node" + node_number + "inuse")
+        isnodeuse[node_number] = True
+        emit("response", {"data": "node" + node_number + "in use"})
+        '''
+        @# TODO:
+        >> landing terminal
+        '''
+
+@socket.on("close", namespace='/console')
+def close(data):
+    global isnodeuse
+    node_number = data["node_number"]
+    isnodeuse[node_number] = False
+    print("close" + node_number + "node")
 
 @socketio.on('setting', namespace='/console')
 def console_setup(message):
