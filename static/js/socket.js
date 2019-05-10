@@ -118,7 +118,6 @@ $(document).ready(function() {
         let message = data["message"];
 
         $('#example').append(message);
-        $('#example').append('<br>');
         $("#example").scrollTop($("#example")[0].scrollHeight);
     });
 
