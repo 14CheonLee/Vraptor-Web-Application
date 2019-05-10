@@ -95,7 +95,19 @@ $(document).ready(function() {
      * Should modify node_number
      */
     $(".console_choice").click(function() {
-        socket_console.emit("check", {node_number: 0});
+        // $('.btn-example').click(function () {
+        //     var $href = $(this).attr('href');
+        //     layer_popup($href);
+
+        //     console.log("dgdgdgdg");
+
+        // });
+        var node1 = this.id;
+        var realnode1 = node1.split('_')[1];
+
+        console.log(realnode1);
+
+        socket_console.emit("check", {node_number: realnode1});
     });
 
     $("#console_close").click(function() {

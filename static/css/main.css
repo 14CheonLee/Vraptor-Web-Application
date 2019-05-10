@@ -311,8 +311,25 @@
 
 .console .console_content {
     background: gray;
+    position: relative;
     color: white;
     height: 300px;
+    font-size: 10px;
+}
+
+.console .console_content #example {
+    background: gray;
+    height: 280px;
+    overflow: scroll;
+}
+
+.console .console_content .commandline {
+    height: 20px;
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    margin: 100px 0 0 0;
+    background: black;
 }
 
 .madeby {

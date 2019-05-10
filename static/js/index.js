@@ -4,6 +4,7 @@ window.onload = function () {
 
     $('.node_1_on').hide();
     $('.node_1_off').hide();
+    
 };
 
 function change_to_temp() {
@@ -77,4 +78,39 @@ function layer_popup(el) {
         return false;
     });
 
+}
+
+$('.example-default-value').each(function() {
+    var default_value = this.value;
+    $(this).focus(function() {
+        if(this.value == default_value) {
+            this.value = '';
+        }
+    });
+    $(this).blur(function() {
+        if(this.value == '') {
+            this.value = default_value;
+        }
+    });
+});
+
+function example_append() {
+    // 이 자리에 결과값들 계속 append 해주면 됨
+    $('#example').append($('#example-textarea').val());
+    $('#example').append('<br>');
+    $('#example-textarea').val('');
+    $("#example").scrollTop($("#example")[0].scrollHeight);
+}
+
+
+var input = document.getElementById("example-textarea");
+input.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+   event.preventDefault();
+   document.getElementById("#myBtn").click();
+  }
+});
+
+function text() {
+    alert("dddd");
 }

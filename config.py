@@ -12,7 +12,7 @@ ADMIN_EMAIL = "admin@admin.com"
 INTERPRETER_PROTOCOL = "http"
 INTERPRETER_HOST = "vraptor-interpreter"
 # INTERPRETER_HOST = "127.0.0.1"
-INTERPRETER_PORT = 8080
+INTERPRETER_PORT = 9002
 INTERPRETER_NAME = "interpreter"
 # INTERPRETER_NAME = "vraptor_interpreter_beta_0_0_1_war/interpreter"
 
