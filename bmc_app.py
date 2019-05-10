@@ -13,9 +13,24 @@ import os
 import time
 import subprocess
 import serialworker
+import base64
 
 
-is_node_use = [False for _ in range(config.NODE_NUM)]
+# Console Data Object
+class ConsoleStatus(object):
+
+    def __init__(self, node_number: int):
+        self.node_number = node_number
+        self.is_use = False
+        self.sess = None
+
+    def get_dict(self):
+        return {"node_number": self.node_number, "is_use": self.is_use, "sess": self.sess}
+
+    def __repr__(self):
+        return "ConsoleStatus(node_number : {}, is_use : {}, sess : {})"\
+            .format(self.node_number, self.is_use, self.sess)
+
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -32,6 +47,8 @@ sensor_process = None
 node_input_queue = [multiprocessing.Queue() for _ in range(config.NODE_NUM)]
 node_output_queue = [multiprocessing.Queue() for _ in range(config.NODE_NUM)]
 sensor_output_queue = multiprocessing.Queue()
+
+console_status_list = [ConsoleStatus(node_number) for node_number in range(config.NODE_NUM)]
 
 # DB
 """
@@ -64,12 +81,40 @@ class Account(db.Model):
             .format(self.id, self.user_id, self.position, self.email)
 
 
+'''
+Routing
+'''
 @app.route('/')
 def index():
     if session.get("account_id") is not None:
+        session["sess"] = generate_session_id()
+
+        print("> Opend web browser, session : ", session)
+
         return render_template("index.html")
     else:
         return render_template("login.html")
+
+
+@app.route('/close_window', methods=["GET"])
+def close_window():
+    global console_status_list
+    node_number = request.args.get("node_number")
+    console_target = None
+
+    print("> Closed web browser, session : ", session)
+
+    # Get the console that is used
+    for console_obj in console_status_list:
+        if console_obj.sess == session["sess"]:
+            console_target = console_obj
+
+    console_target.is_use = False
+    console_target.sess = None
+
+    res_data = json.dumps({"status": "ok"})
+
+    return Response(res_data, status=200, mimetype="application/json")
 
 
 @app.route('/account/login', methods=["POST"])
@@ -308,24 +353,28 @@ def send(data):
 
 @socketio.on('check', namespace='/console')
 def check(data):
-    global is_node_use
+    global console_status_list
     node_number = data["node_number"]
+    console_obj = console_status_list[node_number]
 
     # If somebody uses console
-    if is_node_use[node_number] == True:
-        emit("check_console", {"node_number": node_number, "is_use": is_node_use[node_number]})
+    if console_obj.is_use:
+        emit("check_console", console_obj.get_dict())
     else:
-        emit("check_console", {"node_number": node_number, "is_use": is_node_use[node_number]})
+        emit("check_console", console_obj.get_dict())
 
-        is_node_use[node_number] = True
+        console_obj.sess = session["sess"]
+        console_obj.is_use = True
 
 
 @socketio.on('close', namespace='/console')
 def close(data):
-    global is_node_use
+    global console_status_list
     node_number = data["node_number"]
+    console_obj = console_status_list[node_number]
 
-    is_node_use[node_number] = False
+    console_obj.sess = None
+    console_obj.is_use = False
 
 
 @socketio.on('setting', namespace='/console')
@@ -366,6 +415,9 @@ def console_setup(message):
 #     print(mes)
 #     response = requests.post(url, data=data)
 #     socketio.emit('response', response)
+
+def generate_session_id():
+    return base64.b64encode(os.urandom(16))
 
 
 # Call sensor data
@@ -472,7 +524,7 @@ def init_sensor_process():
 def activate_app():
     print("> Start setting configures ...")
     init_db()
-    init_sensor_process()
+    # init_sensor_process()
     init_serial_process()
     print("> Finished setting configures ...")
 

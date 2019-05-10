@@ -4,6 +4,14 @@
  * @TODO
  * Should Modify dummy data
  */
+$(window).on("unload", function() {
+     $.ajax({
+         type: "GET",
+         url: "/close_window",
+         async: false,
+         data: {node_number: 0}
+     });
+ });
 
 $(document).ready(function() {
     let socket_fan = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/fan");
@@ -110,5 +118,9 @@ $(document).ready(function() {
         if (is_use == true) {
             alert("Somebody uses the console - Node Number : " + node_number);
         }
+        /**
+        * @TODO:
+        * else -> Open the terminal console
+        */
     });
 });
