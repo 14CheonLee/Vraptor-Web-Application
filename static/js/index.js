@@ -105,3 +105,333 @@ input.addEventListener("keyup", function(event) {
 function text() {
     alert("dddd");
 }
+
+/***************************************************************************/
+
+function sensor_test() {
+    var dummy_data = {
+        "sensor": {
+            "chassis_data": {
+                "temperature": 30,
+                "fan_data": [
+                    {
+                        "fan_number": 0,
+                        "speed": 200
+                    },
+                    {
+
+                        "fan_number": 1,
+
+                        "speed": 200
+
+                    },
+
+                    {
+
+                        "fan_number": 2,
+
+                        "speed": 200
+
+                    },
+
+                    {
+
+                        "fan_number": 3,
+
+                        "speed": 200
+
+                    },
+
+                    {
+
+                        "fan_number": 4,
+
+                        "speed": 200
+
+                    },
+
+                    {
+
+                        "fan_number": 5,
+
+                        "speed": 200
+
+                    }
+
+                ],
+
+                "fan_auto_switch": true
+
+            },
+
+            "server_data": {
+
+                "node_data": [
+
+                    {
+
+                        "node_number": 0,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 1,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 2,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 3,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 4,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 5,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 6,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 7,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 8,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 9,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 10,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 11,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 12,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 13,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 14,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 15,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 16,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 17,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 18,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 19,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 20,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 21,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 22,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 23,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 24,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 25,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 26,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 27,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 28,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 29,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 30,
+
+                        "power_status": true
+
+                    },
+
+                    {
+
+                        "node_number": 31,
+
+                        "power_status": true
+
+                    }
+
+                ]
+
+            },
+
+            "timestamp": "2019.04.01.01.34.10"
+
+        }
+    };
+
+    document.getElementById('node1test').innerHTML = dummy_data["sensor"]["chassis_data"]["temperature"];
+}

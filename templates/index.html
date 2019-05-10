@@ -110,7 +110,7 @@
                     <button onclick="change_to_status()" class="power_button">Power</button>
                     <button onclick="change_to_temp()" class="temp_button">Temp</button>
                     <div class="nodes">
-                        <div class="allnode"><button id="node_1" onclick="console_click()" class="console_choice"><a href="#layer2" class="btn-example">Node1</a></button><br>기본초기화면</div><div class="node_2">Node2</div><div class="node_3">Node3</div><div class="node_4">Node4</div>
+                        <div class="allnode"><button id="node_1" onclick="console_click()" class="console_choice"><a href="#layer2" class="btn-example">Node1</a></button><br><div id="node1test"></div></div><div class="node_2">Node2</div><div class="node_3">Node3</div><div class="node_4">Node4</div>
                         <div class="allnode"><button id="node_5" onclick="console_click()" class="console_choice"><a href="#layer2" class="btn-example">Node5</a></button><br>기본초기화면</div><div class="node_6">Node6</div><div class="node_7">Node7</div><div class="node_8">Node8</div>
                         <div id="node_9">Node9</div><div class="node_10">Node10</div><div class="node_11">Node11</div><div class="node_12">Node12</div>
                         <div class="node_13">Node13</div><div class="node_14">Node14</div><div class="node_15">Node15</div><div class="node_16">Node16</div>
@@ -188,6 +188,7 @@
                 <button id="set_fan_mode_btn">Set Fan Mode (fan_auto_switch: true)</button>
                 <button id="set_fan_speed_btn">Set Fan Speed (node_number: 1, speed: 400)</button>
                 <button id="get_all_data_btn">Get Sensor Data</button>
+                <button id="get_dummy_test" onclick="sensor_test()">Get dummy data</button>
             </div>
         </div>
     </body>
