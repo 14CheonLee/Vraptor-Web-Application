@@ -95,19 +95,12 @@ $(document).ready(function() {
      * Should modify node_number
      */
     $(".console_choice").click(function() {
-        // $('.btn-example').click(function () {
-        //     var $href = $(this).attr('href');
-        //     layer_popup($href);
-
-        //     console.log("dgdgdgdg");
-
-        // });
         var node1 = this.id;
-        var realnode1 = node1.split('_')[1];
+        var realnode = node1.split('_')[1];
 
         console.log(realnode1);
 
-        socket_console.emit("check", {node_number: realnode1});
+        socket_console.emit("check", {node_number: realnode});
     });
 
     $("#console_close").click(function() {
@@ -115,11 +108,18 @@ $(document).ready(function() {
     });
 
     $(".console_send_button").click(function() {
-        socket_console.emit("send", {node_number: 0, cmd: $(".console_command").val()});
+        console.log($(".console_command"));
+        socket_console.emit("send", {node_number: 0, cmd: $("#example-textarea").val()});
+        $('#example-textarea').val('');
     });
 
-    socket_console.on("receive", function(message) {
-        console.log(message);
+    socket_console.on("receive", function(data) {
+        let node_number = data["node_number"];
+        let message = data["message"];
+
+        $('#example').append(message);
+        $('#example').append('<br>');
+        $("#example").scrollTop($("#example")[0].scrollHeight);
     });
 
     socket_console.on("check_console", function(message) {

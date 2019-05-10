@@ -4,7 +4,7 @@ window.onload = function () {
 
     $('.node_1_on').hide();
     $('.node_1_off').hide();
-    
+
 };
 
 function change_to_temp() {
@@ -93,15 +93,6 @@ $('.example-default-value').each(function() {
         }
     });
 });
-
-function example_append() {
-    // 이 자리에 결과값들 계속 append 해주면 됨
-    $('#example').append($('#example-textarea').val());
-    $('#example').append('<br>');
-    $('#example-textarea').val('');
-    $("#example").scrollTop($("#example")[0].scrollHeight);
-}
-
 
 var input = document.getElementById("example-textarea");
 input.addEventListener("keyup", function(event) {

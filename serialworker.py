@@ -3,7 +3,7 @@ import time
 import multiprocessing
 import config
 
-SERIAL_TEST_PORT = "/dev/ttys000"
+SERIAL_TEST_PORT = "/dev/ttyUSB0"
 SERIAL_TEST_BAUDRATE = 115200
 
 # SERIAL1_PORT = '/dev/ttymxc0'	## node1
