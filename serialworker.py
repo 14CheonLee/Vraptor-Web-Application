@@ -3,13 +3,6 @@ import time
 import multiprocessing
 import config
 
-SERIAL_TEST_PORT = "/dev/ttyUSB0"
-SERIAL_TEST_BAUDRATE = 115200
-
-# SERIAL1_PORT = '/dev/ttymxc0'	## node1
-# SERIAL2_PORT = '/dev/ttymxc1'	## node2
-# SERIAL_BAUDRATE = 115200
-
 
 class SerialProcess(multiprocessing.Process):
 
@@ -17,8 +10,8 @@ class SerialProcess(multiprocessing.Process):
         multiprocessing.Process.__init__(self)
         self.input_queue = input_queue
         self.output_queue = output_queue
-        self.sp = [serial.Serial(SERIAL_TEST_PORT, SERIAL_TEST_BAUDRATE, timeout=1)]
-        # self.sp = [serial.Serial(config.SERIAL_PORT[node_number], config.SERIAL_BAUDRATE, timeout=1) for node_number in range(config.NODE_NUM)]
+        self.sp = [serial.Serial(config.SERIAL_PORT[node_number], config.SERIAL_BAUDRATE, timeout=1)
+                   for node_number in range(config.NODE_NUM)]
 
     def close(self, node):
         self.sp[node].close()
@@ -31,16 +24,12 @@ class SerialProcess(multiprocessing.Process):
         return self.sp[node].read()
 
     def run(self):
-        self.sp[0].flushInput()
-        # for serial_instance in self.sp:
-        #     print(serial_instance)
-        #     serial_instance.flushInput()
-
-        # self.sp[0].flushInput()
-        # self.sp[1].flushInput()
+        # Setting flush of the Serial instance
+        for serial_instance in self.sp:
+            serial_instance.flushInput()
 
         while True:
-            time.sleep(0.001)
+            time.sleep(config.SERIAL_RUN_INTERVAL_TIME)
 
             # for node in range(config.NODE_NUM):
             for node in range(config.NODE_NUM):
@@ -54,11 +43,20 @@ class SerialProcess(multiprocessing.Process):
                 i = 0
                 # look for incoming serial data
                 waitlen = self.sp[node].inWaiting()
-                while waitlen > 0 and i < 1024:
-                    data += self.sp[node].read(waitlen).decode("UTF-8")
-                    i += waitlen
-                    waitlen = self.sp[node].inWaiting()
-                    # print("read from serial:"+data)
+
+                # Checking whether using serial with UART
+                try:
+                    while waitlen > 0 and i < config.SERIAL_BUFFER_SIZE:
+                        data += self.sp[node].read(waitlen).decode("UTF-8")
+                        i += waitlen
+                        waitlen = self.sp[node].inWaiting()
+
+                except serial.SerialException:
+                    """
+                    @TODO
+                    > Redirect to the reject page
+                    """
+                    print("Occurring an Error")
 
                 if data is not '':
                     # send it back to flask

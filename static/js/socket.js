@@ -108,7 +108,8 @@ $(document).ready(function() {
     });
 
     $(".console_send_button").click(function() {
-        console.log($(".console_command"));
+        console.log($("#example-textarea").val());
+
         socket_console.emit("send", {node_number: 0, cmd: $("#example-textarea").val()});
         $('#example-textarea').val('');
     });
@@ -126,7 +127,7 @@ $(document).ready(function() {
         let is_use = message["is_use"];
 
         // If somebody uses console
-        if (is_use == true) {
+        if (is_use === true) {
             alert("Somebody uses the console - Node Number : " + node_number);
         }
         /**
