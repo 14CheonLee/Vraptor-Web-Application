@@ -6,6 +6,8 @@ window.onload = function () {
     $('.node_1_off').hide();
 
     $('.node222').hide();
+
+
 };
 
 function node_change() {
@@ -19,38 +21,6 @@ function node_change2() {
     $(document).ready(function () {
         $('.node222').hide();
         $('.node111').show();
-    });
-}
-
-function change_to_temp() {
-    $(document).ready(function () {
-        $('.nodes_temp').show();
-        $('.nodes_status').hide();
-        $('.nodes').hide();
-    });
-}
-
-function change_to_status() {
-    $(document).ready(function () {
-        $('.nodes_temp').hide();
-        $('.nodes_status').show();
-        $('.nodes').hide();
-    });
-}
-
-function status_on() {
-    $(document).ready(function () {
-        $('.node_1').hide();
-        $('.node_1_on').show();
-        $('.node_1_off').hide();
-    });
-}
-
-function status_off() {
-    $(document).ready(function () {
-        $('.node_1').hide();
-        $('.node_1_on').hide();
-        $('.node_1_off').show();
     });
 }
 
@@ -96,14 +66,14 @@ function layer_popup(el) {
 }
 
 $('.example-default-value').each(function() {
-    let default_value = this.value;
+    var default_value = this.value;
     $(this).focus(function() {
-        if(this.value === default_value) {
+        if(this.value == default_value) {
             this.value = '';
         }
     });
     $(this).blur(function() {
-        if(this.value === '') {
+        if(this.value == '') {
             this.value = default_value;
         }
     });

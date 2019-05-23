@@ -17,36 +17,15 @@ $(document).ready(function() {
     let socket_fan = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/fan");
     let socket_sensor = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/sensor");
     let socket_console = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/console");
+    let socket_power = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/power");
 
     let current_fan_status = null;
+    let chartlist = [];
+    let nodepowlist = [];
 
-    let ctx = document.getElementById("myChart").getContext('2d');
-    let myChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ["Fanspeed", "None"],
-            datasets: [{
-                backgroundColor: [
-                    "#2ecc71",
-                    "#3498db"
-                ],
-                hiddenLegend: true,
-                data: [0, 0]
-            }]
-        },
-        options: {
-            tooltips: {
-                filter: function (tooltipItem, data) {
-                    let label = data.labels[tooltipItem.index];
-                    if (label === "None") {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-            }
-        }
-    });
+    for (let i = 0; i < 4; i++){
+        chartlist[i] = makechart("myChart" + i);
+    }
 
 
     /**
@@ -79,6 +58,15 @@ $(document).ready(function() {
         console.log(msg);
     });
 
+    // Power socket
+    socket_power.on("connect", function() {
+        socket_power.emit("message", {data: "[Socket_Power] Connected ..."});
+    });
+
+    socket_power.on("response", function(msg) {
+        console.log(msg);
+    });
+
     /**
      * Test
      */
@@ -103,7 +91,7 @@ $(document).ready(function() {
     });
 
     $("#set_fan_mode_btn").click(function() {
-        socket_fan.emit("set_fan_mode", {fan_auto_switch: !current_fan_status});
+        socket_fan.emit("set_fan_mode", {fan_auto_switch: !current_fan_status, default_temperature: $("#fan_default_temperature").val()});
     });
 
     socket_fan.on("get_status_fan_speed", function(msg) {
@@ -111,6 +99,8 @@ $(document).ready(function() {
     });
 
     socket_fan.on("get_status_fan_mode", function(msg) {
+        console.log(msg);
+        
         if (msg["status"] === "ok"){
             current_fan_status = msg["data"]["fan_auto_switch"];
 
@@ -122,7 +112,6 @@ $(document).ready(function() {
         } else {
             document.getElementById('current_status').innerHTML = "오류";
         }
-        console.log(current_fan_status);
     });
 
     /**
@@ -137,20 +126,25 @@ $(document).ready(function() {
     });
 
     socket_sensor.on("get_all_sensor_data", function(msg) {
-        myChart.data.datasets[0].data[0] = msg["sensor"]["chassis_data"]["fan_data"][0]["speed"];
-        myChart.data.datasets[0].data[1] = 1000 - msg["sensor"]["chassis_data"]["fan_data"][0]["speed"];
-        myChart.update();
+        for (let i = 0 ; i < 4; i++){
+            chartlist[i].data.datasets[0].data[0] = msg["sensor"]["chassis_data"]["fan_data"][i]["speed"];
+            chartlist[i].data.datasets[0].data[1] = 1000-msg["sensor"]["chassis_data"]["fan_data"][i]["speed"];
+            chartlist[i].update();
+        }
 
         document.getElementById('node_1_temp').innerHTML = msg["sensor"]["chassis_data"]["temperature"];
 
-        let node1_pow = msg["sensor"]["server_data"]["node_data"][0]["power_status"];
+        for (let i = 0; i < 2; i++){
+            nodepowlist[i] = msg["sensor"]["server_data"]["node_data"][i]["power_status"];
 
-        if (node1_pow === true){
-            document.getElementById('node1_pow').innerHTML = "전원 켜져있음";
+            if (nodepowlist[i] === true){
+                document.getElementById('node_pow'+i).innerHTML = "전원 켜져있음";
+            }
+            else {
+                document.getElementById('node_pow'+i).innerHTML = "전원 꺼져있음";
+            }
         }
-        else {
-            document.getElementById('node1_pow').innerHTML = "전원 꺼져있음";
-        }
+
 
         console.log(msg);
     });
@@ -162,8 +156,22 @@ $(document).ready(function() {
      * @TODO
      * Should modify this name
      */
-    $("#node1_pow_reset").click(function() {
-        socket_sensor.emit("message", {data: "Clicked node1 reset button"});
+    $(".node_pow_reset").click(function() {
+        // 0 : reset, 1: off
+        let node = this.id;
+        let realnode = node.split('_')[1];
+        socket_power.emit("set_power_status", {node_number: realnode, power_status: 0});
+    });
+
+    $(".node_pow_off").click(function() {
+        // 0 : reset, 1: off
+        let node = this.id;
+        let realnode = node.split('_')[1];
+        socket_power.emit("set_power_status", {node_number: realnode, power_status: 1});
+    });
+
+    socket_power.on("get_status_of_power_status", function(msg) {
+        console.log(msg);
     });
 
     /**
@@ -172,8 +180,8 @@ $(document).ready(function() {
      * Should modify node_number
      */
     $(".console_choice").click(function() {
-        var node1 = this.id;
-        var realnode = node1.split('_')[1];
+        let node = this.id;
+        let realnode = node.split('_')[1];
 
         socket_console.emit("check", {node_number: realnode});
     });
@@ -213,3 +221,35 @@ $(document).ready(function() {
         */
     });
 });
+
+function makechart(chart_id) {
+
+    let ctx = document.getElementById(chart_id).getContext('2d');
+
+    return new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ["Fanspeed", "None"],
+            datasets: [{
+                backgroundColor: [
+                    "#2ecc71",
+                    "#3498db"
+                ],
+                hiddenLegend: true,
+                data: [0, 0]
+            }]
+        },
+        options: {
+            tooltips: {
+                filter: function (tooltipItem, data) {
+                    let label = data.labels[tooltipItem.index];
+                    if (label === "None") {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+    });
+}

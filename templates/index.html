@@ -42,24 +42,6 @@
                         <div id="layer2" class="pop-layer">
                             <div class="pop-container">
                                 <div class="pop-conts">
-                                    <!-- <div class="console">
-                                        <div class="console_content">
-                                            <div id = "example">
-                                            </div>
-                                            <div class="commandline">
-                                                <form>
-                                                    <div class="console_input">
-                                                        <input type="text" autofocus class="console_command" id="example-textarea" style="width: 100%; height: 20px; background: gray; color: white;"/>
-                                                        <button id="myBtn" class="console_send_button"></button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="btn-r">
-                                        <a href="#" class="btn-layerClose">Close</a>
-                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -74,11 +56,14 @@
                 <div class="fan_control">
                     <div class="fan_status">
                         <button id="set_fan_mode_btn">Set Fan Mode (fan_auto_switch: true)</button>
+                        <input id="fan_default_temperature"/>
                         <div id="current_status"></div>
                         <div class="first_fan">
                             First_fan
-                            <canvas id="myChart"></canvas>
+                            <canvas id="myChart0"></canvas>
+
                             <div class="set_fan_speed">
+
                             </div>
                             <div class="ex_fan">
                                 <p id="first_fan_speed"></p>
@@ -86,85 +71,66 @@
                         </div>
                         <div class="second_fan">
                             Second_fan
-                            <div class="ex_fan">
-                            </div>
+                            <canvas id="myChart1"></canvas>
                         </div>
                         <div class="third_fan">
                             Third_fan
-                            <div class="ex_fan">
-
-                            </div>
+                            <canvas id="myChart2"></canvas>
                         </div>
                         <div class="fourth_fan">
                             Fourth_fan
-                            <div class="ex_fan">
-
-                            </div>
+                            <canvas id="myChart3"></canvas>
                         </div>
                     </div>
                 </div>
                 <div class="status">
-                    <button onclick="change_to_status()" class="power_button">Power</button>
-                    <button onclick="change_to_temp()" class="temp_button">Temp</button>
                     <div class="nodes">
-                            <!-- <button id="node_1" onclick="console_click()" class="console_choice"> -->
-                            <button onclick="node_change2()" class="power_button">Node1</button>
-                            <button onclick="node_change()" class="power_button">Node2</button>
-                            <div class="node111">
-                                <p>Node1</p>
-                                <div id="node1_pow"></div>
-                                <button id="node1_pow_reset">POWER RESET</button>
-                                <div class="node_1_terminal">
-                                    <div class="console">
-                                        <div class="console_content">
-                                            <div id = "example">
-                                            </div>
-                                            <div class="commandline">
-                                                <!-- <form> -->
-                                                <div class="console_input" style="background: gray; position:relative; bottom: 0px;">
-                                                    <input autofocus class="console_command" id="console_input_id" style="width: 100%; height: 20px; position:relative; bottom: -205px; background: gray; color: white; "/>
-                                                    <!-- <button id="myBtn" class="console_send_button" style="background: gray; position:relative; bottom: -175px; visibility: hidden;"></button> -->
-                                                </div>
-                                                <!-- </form> -->
+                        <!-- <button id="node_1" onclick="console_click()" class="console_choice"> -->
+                        <button onclick="node_change2()" class="power_button">Node1</button>
+                        <button onclick="node_change()" class="power_button">Node2</button>
+                        <div class="node111">
+                            <p>Node1</p>
+                            <div id="node_pow0"></div>
+                            <button class="node_pow_reset" id="nodePowerReset_0">POWER RESET</button>
+                            <button class="node_pow_off" id="nodePowerOff_0">POWER OFF</button>
+                            <div class="node_1_terminal">
+                                <div class="console">
+                                    <div class="console_content">
+                                        <div id = "example">
+                                        </div>
+                                        <div class="commandline">
+                                            <div class="console_input" style="background: gray; position:relative; bottom: 0px;">
+                                                <input autofocus class="console_command" id="console_input_id" style="width: 100%; height: 20px; position:relative; bottom: -205px; background: gray; color: white; "/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- <div class="node222">
-                                <p>Node2</p>
-                                <div class="node_2_terminal">
-                                    <div class="console">
-                                        <div class="console_content">
-                                            <div id = "example">
-                                            </div>
-                                            <div class="commandline">
-                                                <form>
-                                                    <div class="console_input" style="background: gray; position:relative; bottom: 0px;">
-                                                        <input type="text" autofocus class="console_command" id="example-textarea" style="width: 100%; height: 20px; position:relative; bottom: -205px; background: gray; color: white; "/>
-                                                        <button id="myBtn" class="console_send_button" style="background: gray; position:relative; bottom: -175px; visibility: hidden;"></button>
-                                                    </div>
-                                                </form>
+                        </div>
+                        <div id="node1test">
+                        </div>
+                        <div class="node222">
+                            <p>Node2</p>
+                            <div id="node_pow1"></div>
+                            <button class="node_pow_reset" id="nodePowerReset_1">POWER RESET</button>
+                            <button class="node_pow_off" id="nodePowerOff_1">POWER OFF</button>
+                            <div class="node_1_terminal">
+                                <div class="console">
+                                    <div class="console_content">
+                                        <div id = "example">
+                                        </div>
+                                        <div class="commandline">
+                                            <div class="console_input" style="background: gray; position:relative; bottom: 0px;">
+                                                <input autofocus class="console_command" id="console_input_id" style="width: 100%; height: 20px; position:relative; bottom: -205px; background: gray; color: white; "/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div> -->
-                            <!-- </button><br> -->
-                            <div id="node1test">
                             </div>
-                        <!-- <div class="node_2">Node2</div> -->
+                        </div>
                     </div>
-
                 </div>
-
             </div>
-            <!-- <div class="data">
-                {% for value in data %}
-                <p>{{ value }}</p>
-                {% endfor %}
-            </div> -->
         </article> <!-- 본문 -->
         <footer>
             <div class="madeby">
@@ -173,19 +139,5 @@
                 </div>
             </div>
         </footer> <!-- 끝머리 -->
-
-        <!-- Socket Test -->
-        <div id="socket_test">
-            <div id="btn_test">
-                <button id="fan_btn">Fan Button</button>
-                <button id="sensor_btn">Sensor Button</button>
-            </div>
-            <div id="get_btn">
-
-                <button id="set_fan_speed_btn">Set Fan Speed (node_number: 1, speed: 400)</button>
-                <button id="get_all_data_btn">Get Sensor Data</button>
-                <button id="get_dummy_test" onclick="sensor_test()">Get dummy data</button>
-            </div>
-        </div>
     </body>
 </html>

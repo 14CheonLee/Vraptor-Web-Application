@@ -222,8 +222,6 @@ Socket IO
 # Fan
 @socketio.on('connect', namespace='/fan')
 def connect():
-    print("[Socket_Fan] Connected")
-
     headers = dict()
     form_data = dict()
     url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
@@ -245,6 +243,8 @@ def connect():
     res_data = json.loads(response.text)
 
     emit("get_status_fan_mode", res_data)
+
+    print("[Socket_Fan] Connected")
     emit("response", {"data": "[Socket_Fan] Connected"})
 
 
@@ -295,6 +295,7 @@ def set_fan_mode(data):
     headers['Content-Type'] = 'application/x-www-form-urlencoded'
     headers['Accept'] = 'application/json'
     form_data['fan_auto_switch'] = data["fan_auto_switch"]
+    form_data['default_temperature'] = data["default_temperature"]
 
     response = requests.post(url, headers=headers, data=form_data)
     res_data = json.loads(response.text)
@@ -345,11 +346,6 @@ def connect():
 
     print("[Socket_Console] Connected")
     emit("response", {"data": "[Socket_Console] Connected"})
-
-    # result = runPowerTool(['consolestat'])
-    # result1 = result.split('\n')[0].split(':')[1]
-    # result2 = result.split('\n')[1].split(':')[1]
-    # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/console')
 
 
 @socketio.on('disconnect', namespace='/console')
@@ -422,21 +418,45 @@ def console_setup(message):
     # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/console')
 
 
-# # power controll
-# @socketio.on('handle', namespace='/pw')
-# def handle(mes):
-#     url = config.INTERPRETER_URI + '/run_power_tool'
-#     # headers = {'Content-type': 'text/html; charset=UTF-8'}
-#     data = {'tag': 'on'}
-#
-#     """
-#     @TODO
-#     > Modify these
-#     """
-#     # response = requests.post(url, data=mes)
-#     print(mes)
-#     response = requests.post(url, data=data)
-#     socketio.emit('response', response)
+# Power
+@socketio.on('connect', namespace='/power')
+def connect():
+    print("[Socket_Power] Connected")
+    emit("response", {"data": "[Socket_Power] Connected"})
+
+
+@socketio.on('disconnect', namespace='/power')
+def disconnect():
+    print("[Socket_Fan] Disconnected")
+
+
+@socketio.on('message', namespace='/power')
+def message(data):
+    print(data)
+    emit("response", {"data": "[Socket_Power] {}".format(data)})
+
+
+@socketio.on('set_power_status', namespace='/power')
+def set_power_status(data):
+    headers = dict()
+    form_data = dict()
+    url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
+                                     config.INTERPRETER_HOST,
+                                     config.INTERPRETER_PORT,
+                                     config.INTERPRETER_NAME,
+                                     config.CATEGORY_NODE)
+    url += "set_power_status"
+
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    headers['Accept'] = 'application/json'
+    form_data['node_number'] = data["node_number"]
+    form_data['power_status'] = data["power_status"]
+
+    response = requests.post(url, headers=headers, data=form_data)
+    res_data = json.loads(response.text)
+
+    emit("get_status_of_power_status", res_data)
+
 
 def generate_session_id():
     return base64.b64encode(os.urandom(16))
