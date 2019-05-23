@@ -223,6 +223,28 @@ Socket IO
 @socketio.on('connect', namespace='/fan')
 def connect():
     print("[Socket_Fan] Connected")
+
+    headers = dict()
+    form_data = dict()
+    url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
+                                     config.INTERPRETER_HOST,
+                                     config.INTERPRETER_PORT,
+                                     config.INTERPRETER_NAME,
+                                     config.CATEGORY_FAN)
+    url += "set_auto_switch"
+
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    headers['Accept'] = 'application/json'
+    """
+    @TODO:
+    Get the current status of fan status from the interpreter
+    """
+    form_data['fan_auto_switch'] = False
+
+    response = requests.post(url, headers=headers, data=form_data)
+    res_data = json.loads(response.text)
+
+    emit("get_status_fan_mode", res_data)
     emit("response", {"data": "[Socket_Fan] Connected"})
 
 
@@ -256,7 +278,7 @@ def set_fan_speed(data):
     response = requests.post(url, headers=headers, data=form_data)
     res_data = json.loads(response.text)
 
-    emit("response", res_data)
+    emit("get_status_fan_speed", res_data)
 
 
 @socketio.on('set_fan_mode', namespace='/fan')
@@ -277,7 +299,7 @@ def set_fan_mode(data):
     response = requests.post(url, headers=headers, data=form_data)
     res_data = json.loads(response.text)
 
-    emit('response', res_data)
+    emit("get_status_fan_mode", res_data)
 
 
 # Sensor
@@ -468,7 +490,7 @@ def send_sensor_data():
         if not sensor_output_queue.empty():
             sensor_data = sensor_output_queue.get()
 
-            socketio.emit("response", sensor_data, namespace='/sensor')
+            socketio.emit("get_all_sensor_data", sensor_data, namespace='/sensor')
 
         if not sensor_process.is_alive():
             break
@@ -524,7 +546,7 @@ def init_sensor_process():
 def activate_app():
     print("> Start setting configures ...")
     init_db()
-    # init_sensor_process()
+    init_sensor_process()
     init_serial_process()
     print("> Finished setting configures ...")
 

@@ -39,12 +39,12 @@
 .pop-layer .pop-container {
     padding: 20px 25px;
   }
-  
+
   .pop-layer p.ctxt {
     color: #666;
     line-height: 25px;
   }
-  
+
   .pop-layer .btn-r {
     width: 100%;
     margin: 10px 0 20px;
@@ -52,7 +52,7 @@
     border-top: 1px solid #DDD;
     text-align: right;
   }
-  
+
   .pop-layer {
     display: none;
     position: absolute;
@@ -64,7 +64,7 @@
     border: 5px solid #3571B5;
     z-index: 10;
   }
-  
+
   .dim-layer {
     display: none;
     position: fixed;
@@ -75,7 +75,7 @@
     height: 100%;
     z-index: 100;
   }
-  
+
   .dim-layer .dimBg {
     position: absolute;
     top: 0;
@@ -86,11 +86,11 @@
     opacity: .5;
     filter: alpha(opacity=50);
   }
-  
+
   .dim-layer .pop-layer {
     display: block;
   }
-  
+
   a.btn-layerClose {
     display: inline-block;
     height: 25px;
@@ -101,7 +101,7 @@
     color: #fff;
     line-height: 25px;
   }
-  
+
   a.btn-layerClose:hover {
     border: 1px solid #091940;
     background-color: #1f326a;
@@ -184,8 +184,6 @@
 
 .wrapper .status .nodes {
     display: grid;
-    grid-template-rows: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
-    grid-template-columns: 25% 25% 25% 25%;
     background: lightslategray;
     border: 2px solid black;
     margin: 5px 0 0 0;
@@ -277,12 +275,12 @@
     border: none;
     cursor: pointer;
 }
-  
+
 .console .dropdown {
     position: relative;
     display: inline-block;
 }
-  
+
 .console .dropdown-content {
     display: none;
     position: absolute;
@@ -291,20 +289,20 @@
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
-  
+
 .console .dropdown-content a {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
-  
+
 .console .dropdown-content a:hover {background-color: #f1f1f1}
-  
+
 .console .dropdown:hover .dropdown-content {
     display: block;
 }
-  
+
 .console .dropdown:hover .dropbtn {
     background-color: #3e8e41;
 }
@@ -319,7 +317,8 @@
 
 .console .console_content #example {
     background: gray;
-    height: 280px;
+    height: 500px;
+    width: 100%;
     overflow: scroll;
 }
 
