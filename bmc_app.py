@@ -89,7 +89,7 @@ def index():
     if session.get("account_id") is not None:
         session["sess"] = generate_session_id()
 
-        print("> Opend web browser, session : ", session)
+        print("> Opened web browser, session : ", session)
 
         return render_template("index.html")
     else:
@@ -369,20 +369,54 @@ def send(data):
     node_input_queue[node_number].put(cmd.encode("UTF-8"))
 
 
-@socketio.on('check', namespace='/console')
-def check(data):
+@socketio.on('secure', namespace='/console')
+def secure(data):
     global console_status_list
-    node_number = data["node_number"]
+    node_number = int(data["node_number"])
     console_obj = console_status_list[node_number]
 
     # If somebody uses console
     if console_obj.is_use:
-        emit("check_console", console_obj.get_dict())
+        emit("secure_console", console_obj.get_dict())
     else:
-        emit("check_console", console_obj.get_dict())
-
+        emit("secure_console", console_obj.get_dict(), broadcast=True)
         console_obj.sess = session["sess"]
         console_obj.is_use = True
+
+
+@socketio.on('check', namespace='/console')
+def check(data):
+    global console_status_list
+
+    node_number = int(data["node_number"])
+    console_obj = console_status_list[node_number]
+
+    data = dict()
+    data["console"] = console_obj.get_dict()
+
+    if console_obj.sess == session["sess"]:
+        data["is_secure"] = True
+        emit("check", data)
+    else:
+        data["is_secure"] = False
+        emit("check", data)
+
+
+@socketio.on('monitor', namespace='/console')
+def monitor(data):
+    global console_status_list
+
+    node_number = int(data["node_number"])
+    console_obj = console_status_list[node_number]
+
+    # If secure -> monitoring
+    if console_obj.sess == session["sess"]:
+        console_obj.sess = None
+        console_obj.is_use = False
+
+        emit("monitor_console", console_obj.get_dict(), broadcast=True)
+    else:
+        emit("monitor_console", console_obj.get_dict())
 
 
 @socketio.on('close', namespace='/console')

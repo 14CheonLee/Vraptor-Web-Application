@@ -174,16 +174,18 @@ $(document).ready(function() {
         console.log(msg);
     });
 
-    /**
-     * Console
-     * @TODO
-     * Should modify node_number
-     */
-    $(".console_choice").click(function() {
-        let node = this.id;
-        let realnode = node.split('_')[1];
+    $(".monitor").click(function() {
+        let node_id = this.id;
+        let node_number = node_id.split('_')[1];
 
-        socket_console.emit("check", {node_number: realnode});
+		socket_console.emit("monitor", {node_number: node_number});
+    });
+
+    $(".secure").click(function() {
+        let node_id = this.id;
+        let node_number = node_id.split('_')[1];
+
+		socket_console.emit("secure", {node_number: node_number});
     });
 
     $("#console_close").click(function() {
@@ -207,19 +209,51 @@ $(document).ready(function() {
         $("#example").scrollTop($("#example")[0].scrollHeight);
     });
 
-    socket_console.on("check_console", function(message) {
-        let node_number = message["node_number"];
+	socket_console.on("monitor_console", function(message) {
+		let node_number = message["node_number"];
+		let is_use = message["is_use"];
+
+		if (is_use === true) {
+            alert("Somebody use the console in Secure - Node Number : " + node_number);		
+		}
+		else {
+            alert("Success to change monitoring mode - Node Number : " + node_number);	
+		}
+
+	});
+
+    socket_console.on("secure_console", function(message) {
+        let node_num = message["node_number"];
         let is_use = message["is_use"];
 
         // If somebody uses console
         if (is_use === true) {
-            alert("Somebody uses the console - Node Number : " + node_number);
+            alert("Somebody uses the console in Secure already - Node Number : " + node_num);
         }
+		else {
+			//alert("Success blocking others console - Node Number : " + node_number);
+			socket_console.emit("check", {node_number: node_num});
+		}
         /**
         * @TODO:
         * else -> Open the terminal console
         */
     });
+
+	socket_console.on("check", function(message) {
+		let is_secure = message["is_secure"];
+		let console = message["console"];
+		let node_number = console["node_number"];
+
+		if (is_secure === true) {
+			alert("Success blocking others console - Node Number : " + node_number);	
+		}
+		else {
+			alert("Somebody operate secure service - Node Number : " + node_number);		
+		}
+				
+	});
+
 });
 
 function makechart(chart_id) {
