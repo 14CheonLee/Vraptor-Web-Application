@@ -33,12 +33,12 @@ function console_click(){
 
 function layer_popup(el) {
 
-    var $el = $(el);        //레이어의 id를 $el 변수에 저장
-    var isDim = $el.prev().hasClass('dimBg');   //dimmed 레이어를 감지하기 위한 boolean 변수
+    let $el = $(el);        //레이어의 id를 $el 변수에 저장
+    let isDim = $el.prev().hasClass('dimBg');   //dimmed 레이어를 감지하기 위한 boolean 변수
 
     isDim ? $('.dim-layer').fadeIn() : $el.fadeIn();
 
-    var $elWidth = ~~($el.outerWidth()),
+    let $elWidth = ~~($el.outerWidth()),
         $elHeight = ~~($el.outerHeight()),
         docWidth = $(document).width(),
         docHeight = $(document).height();
@@ -66,7 +66,7 @@ function layer_popup(el) {
 }
 
 $('.example-default-value').each(function() {
-    var default_value = this.value;
+    let default_value = this.value;
     $(this).focus(function() {
         if(this.value == default_value) {
             this.value = '';
@@ -79,7 +79,7 @@ $('.example-default-value').each(function() {
     });
 });
 
-var input = document.getElementById("example-textarea");
+let input = document.getElementById("example-textarea");
 if (input) {
     input.addEventListener("keyup", function (event) {
         if (event.keyCode === 13) {

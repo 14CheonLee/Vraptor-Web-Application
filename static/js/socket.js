@@ -91,7 +91,8 @@ $(document).ready(function() {
     });
 
     $("#set_fan_mode_btn").click(function() {
-        socket_fan.emit("set_fan_mode", {fan_auto_switch: !current_fan_status, default_temperature: $("#fan_default_temperature").val()});
+        console.log($("#fan_default_temperature").val());
+        socket_fan.emit("set_fan_mode", {fan_auto_switch: 1 - current_fan_status, default_temperature: $("#fan_default_temperature").val()});
     });
 
     socket_fan.on("get_status_fan_speed", function(msg) {
@@ -101,10 +102,10 @@ $(document).ready(function() {
     socket_fan.on("get_status_fan_mode", function(msg) {
         console.log(msg);
         
-        if (msg["status"] === "ok"){
-            current_fan_status = msg["data"]["fan_auto_switch"];
+        if (msg["status"] === "ok") {
+            current_fan_status = ["output_data"]["command_result"];
 
-            if (current_fan_status === true) {
+            if (current_fan_status === 0) {
                 document.getElementById('current_status').innerHTML = "오토에요";
             } else {
                 document.getElementById('current_status').innerHTML = "수동임";
@@ -126,15 +127,15 @@ $(document).ready(function() {
     });
 
     socket_sensor.on("get_all_sensor_data", function(msg) {
-        for (let i = 0 ; i < 4; i++){
+        for (let i = 0 ; i < 4; i++) {
             chartlist[i].data.datasets[0].data[0] = msg["sensor"]["chassis_data"]["fan_data"][i]["speed"];
-            chartlist[i].data.datasets[0].data[1] = 1000-msg["sensor"]["chassis_data"]["fan_data"][i]["speed"];
+            chartlist[i].data.datasets[0].data[1] = 1000 - msg["sensor"]["chassis_data"]["fan_data"][i]["speed"];
             chartlist[i].update();
         }
 
         document.getElementById('node_1_temp').innerHTML = msg["sensor"]["chassis_data"]["temperature"];
 
-        for (let i = 0; i < 2; i++){
+        for (let i = 0; i < 2; i++) {
             nodepowlist[i] = msg["sensor"]["server_data"]["node_data"][i]["power_status"];
 
             if (nodepowlist[i] === true){
@@ -144,7 +145,6 @@ $(document).ready(function() {
                 document.getElementById('node_pow'+i).innerHTML = "전원 꺼져있음";
             }
         }
-
 
         console.log(msg);
     });
@@ -157,17 +157,24 @@ $(document).ready(function() {
      * Should modify this name
      */
     $(".node_pow_reset").click(function() {
-        // 0 : reset, 1: off
-        let node = this.id;
-        let realnode = node.split('_')[1];
-        socket_power.emit("set_power_status", {node_number: realnode, power_status: 0});
+        // 0 : reset | 1 : off | 2 : on
+        let node_id = this.id;
+        let node_number = node_id.split('_')[1];
+        socket_power.emit("set_power_status", {node_number: node_number, power_status: 0});
     });
 
     $(".node_pow_off").click(function() {
-        // 0 : reset, 1: off
-        let node = this.id;
-        let realnode = node.split('_')[1];
-        socket_power.emit("set_power_status", {node_number: realnode, power_status: 1});
+        // 0 : reset | 1: off | 2 : on
+        let node_id = this.id;
+        let node_number = node_id.split('_')[1];
+        socket_power.emit("set_power_status", {node_number: node_number, power_status: 1});
+    });
+
+    $(".node_pow_on").click(function() {
+        // 0 : reset | 1: off | 2 : on
+        let node_id = this.id;
+        let node_number = node_id.split('_')[1];
+        socket_power.emit("set_power_status", {node_number: node_number, power_status: 2});
     });
 
     socket_power.on("get_status_of_power_status", function(msg) {

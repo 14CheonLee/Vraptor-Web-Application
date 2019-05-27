@@ -203,43 +203,21 @@ def update_query():
 
 
 '''
-Checking Power of Nodes
-'''
-def runPowerTool(args):
-    '''
-    @TODO
-    '''
-    # cmd = ['/usr/bin/powertool'] + args
-    # fd = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout
-    # data = fd.read()
-    # fd.close()
-    # return data
-
-
-'''
 Socket IO
 '''
 # Fan
 @socketio.on('connect', namespace='/fan')
 def connect():
     headers = dict()
-    form_data = dict()
     url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
                                      config.INTERPRETER_HOST,
                                      config.INTERPRETER_PORT,
                                      config.INTERPRETER_NAME,
                                      config.CATEGORY_FAN)
-    url += "set_auto_switch"
-
-    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    url += "get_auto_switch"
     headers['Accept'] = 'application/json'
-    """
-    @TODO:
-    Get the current status of fan status from the interpreter
-    """
-    form_data['fan_auto_switch'] = False
 
-    response = requests.post(url, headers=headers, data=form_data)
+    response = requests.get(url, headers=headers)
     res_data = json.loads(response.text)
 
     emit("get_status_fan_mode", res_data)
@@ -290,14 +268,23 @@ def set_fan_mode(data):
                                      config.INTERPRETER_PORT,
                                      config.INTERPRETER_NAME,
                                      config.CATEGORY_FAN)
-    url += "set_auto_switch"
 
     headers['Content-Type'] = 'application/x-www-form-urlencoded'
     headers['Accept'] = 'application/json'
     form_data['fan_auto_switch'] = data["fan_auto_switch"]
-    form_data['default_temperature'] = data["default_temperature"]
 
-    response = requests.post(url, headers=headers, data=form_data)
+    # If the 'default_temperature' is blank
+    if data["default_temperature"] is "":
+        url += "set_auto_switch"
+
+        response = requests.post(url, headers=headers, data=form_data)
+    # If set the 'default_temperature'
+    else:
+        url += "set_auto_switch_with_temp"
+        form_data['default_temperature'] = data["default_temperature"]
+
+        response = requests.post(url, headers=headers, data=form_data)
+
     res_data = json.loads(response.text)
 
     emit("get_status_fan_mode", res_data)
@@ -427,29 +414,6 @@ def close(data):
 
     console_obj.sess = None
     console_obj.is_use = False
-
-
-@socketio.on('setting', namespace='/console')
-def console_setup(message):
-    pass
-    '''
-    @TODO
-    >> after develop runPowerTool funtion
-    >> after define data dictionary
-    '''
-    # print(str(message['node']) + ":" + message['cmd'].encode("utf-8"));
-    # n = message['node']
-    # if n == 0 or n == 1:
-    #     node = str(n+1)
-    #     cmd = message['cmd'].encode("utf-8")
-    #     if cmd == 'on':
-    #         runPowerTool(['consoleon', node])
-    #     elif cmd == 'off':
-    #         runPowerTool(['consoleoff', node])
-    # result = runPowerTool(['consolestat'])
-    # result1 = result.split('\n')[0].split(':')[1]
-    # result2 = result.split('\n')[1].split(':')[1]
-    # socketio.emit("setting", {'node1':result1, 'node2':result2}, namespace='/console')
 
 
 # Power
