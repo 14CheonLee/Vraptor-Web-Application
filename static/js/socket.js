@@ -22,9 +22,11 @@ $(document).ready(function() {
     let current_fan_status = null;
     let chartlist = [];
     let nodepowlist = [];
+    let myChart;
 
-    for (let i = 0; i < 4; i++){
-        chartlist[i] = makechart("myChart" + i);
+    for (let i = 0; i < 4; i++) {
+        myChart = makechart("myChart" + i);
+        chartlist[i] = myChart;
     }
 
 
@@ -264,25 +266,24 @@ $(document).ready(function() {
 });
 
 function makechart(chart_id) {
-
     let ctx = document.getElementById(chart_id).getContext('2d');
 
-    return new Chart(ctx, {
+    let myChart = new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ["Fanspeed", "None"],
-            datasets: [{
-                backgroundColor: [
-                    "#2ecc71",
-                    "#3498db"
-                ],
-                hiddenLegend: true,
-                data: [0, 0]
+        labels: ["Fanspeed", "None"],
+        datasets: [{
+              backgroundColor: [
+                "#2ecc71",
+                "#3498db"
+              ],
+              hiddenLegend: true,
+              data: [0, 0]
             }]
         },
         options: {
             tooltips: {
-                filter: function (tooltipItem, data) {
+                filter: function(tooltipItem, data) {
                     let label = data.labels[tooltipItem.index];
                     if (label === "None") {
                         return false;
@@ -293,4 +294,6 @@ function makechart(chart_id) {
             }
         }
     });
+
+    return myChart;
 }
