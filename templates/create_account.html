@@ -1,15 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Create Account</title>
-    </head>
-    <body>
-        <form action="/account/create_query" method="post">
-            id : <input type="text" name="user_id"/>
-            pw : <input type="password" name="user_pw"/>
-            email : <input type="text" name="email"/>
-            <input type="submit" Value="Create"/>
-        </form>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <title>CREATE ACCOUNT</title>
+        <script type="text/javascript">
+            function create_account_btn() {
+                window.location.replace("/account/create")
+            }
+        </script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="HTML5 website template">
+  <meta name="keywords" content="global, template, html, sass, jquery">
+  <meta name="author" content="Bucky Maler">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main_2.css') }}">
+  <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+</head>
+<body>
+    <div class="perspective effect-rotate-left">
+        <div class="container"><div class="outer-nav--return"></div>
+            <div id="viewport" class="l-viewport">
+                <div class="l-wrapper">
+                    <header class="header">
+                        <a class="header--logo" href="#0">
+                         <p>V-Raptor</p>
+                        </a>
+                    </header>
+                    <ul class="l-main-content main-content">
+                        <li class="l-section section section--is-active">
+                            <div class="intro">
+                                <form action="/account/create_query" method="post">
+                                    <div class="IDcheck">
+                                        <span style="font-size: 20px; font-weight: bold;">ID &nbsp; : </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="user_id" style="background-color: black; color: white; font-weight: normal;"/>
+                                    </div>
+                                    <div class="PWcheck">
+                                        <span style="font-size: 15px;">PASSWORD</span> <span style="font-size: 20px;">:&nbsp;&nbsp;</span>  <input type="password" name="user_pw" style="background: black; color: white; font-weight: normal;"/>
+                                    </div>
+                                    <div class="EMAIL">
+                                        <span style="font-size: 15px;">E-MAIL</span> <span style="font-size: 20px;">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <input type="text" name="email" style="background: black; color: white; font-weight: normal;"/>
+                                    </div>
+                                    <div class="IPinput">
+                                        <input type="submit" Value="CREATE" style="background: black; color: white; font-weight: bold; height: 30px; margin: 10px 0 0 0;"/>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

@@ -22,10 +22,11 @@ class ConsoleStatus(object):
     def __init__(self, node_number: int):
         self.node_number = node_number
         self.is_use = False
-        self.sess = None
+        self.sess = ""
+        self.last_input = ""
 
     def get_dict(self):
-        return {"node_number": self.node_number, "is_use": self.is_use, "sess": self.sess}
+        return {"node_number": self.node_number, "is_use": self.is_use, "sess": self.sess, "last_input": self.last_input}
 
     def __repr__(self):
         return "ConsoleStatus(node_number : {}, is_use : {}, sess : {})"\
@@ -100,17 +101,14 @@ def index():
 def close_window():
     global console_status_list
     node_number = request.args.get("node_number")
-    console_target = None
 
     print("> Closed web browser, session : ", session)
 
     # Get the console that is used
-    for console_obj in console_status_list:
-        if console_obj.sess == session["sess"]:
-            console_target = console_obj
-
-    console_target.is_use = False
-    console_target.sess = None
+    # for console_obj in console_status_list:
+    #     if console_obj.sess == session["sess"]:
+    #         console_obj.is_use = False
+    #         console_obj.sess = None
 
     res_data = json.dumps({"status": "ok"})
 
@@ -337,7 +335,16 @@ def connect():
 
 @socketio.on('disconnect', namespace='/console')
 def disconnect():
-    global thread_console, is_thread_console_running
+    global thread_console, is_thread_console_running, console_status_list
+
+    for console_obj in console_status_list:
+        if console_obj.sess == session["sess"]:
+            console_obj.sess = None
+            console_obj.is_use = False
+
+            emit("monitor_console", console_obj.get_dict(), broadcast=True)
+        else:
+            emit("monitor_console", console_obj.get_dict())
 
     if thread_console is not None:
         is_thread_console_running = False
@@ -348,10 +355,12 @@ def disconnect():
 
 @socketio.on('send', namespace='/console')
 def send(data):
-    global node_input_queue
+    global node_input_queue, console_status_list
 
-    node_number = data["node_number"]
+    node_number = int(data["node_number"])
+    console_obj = console_status_list[node_number]
     cmd = data["cmd"] + "\n"
+    console_obj.last_input = data["cmd"]
 
     node_input_queue[node_number].put(cmd.encode("UTF-8"))
 
@@ -359,6 +368,7 @@ def send(data):
 @socketio.on('secure', namespace='/console')
 def secure(data):
     global console_status_list
+
     node_number = int(data["node_number"])
     console_obj = console_status_list[node_number]
 
@@ -370,6 +380,21 @@ def secure(data):
         console_obj.sess = session["sess"]
         console_obj.is_use = True
 
+@socketio.on('return_is_secure1', namespace='/console')
+def return_is_secure(data):
+    global console_status_list
+
+    node_number = int(data["node_number"])
+    console_obj = console_status_list[node_number]
+
+    data = dict()
+    data["console"] = console_obj.get_dict()
+    if console_obj.sess == session["sess"]:
+        data["is_secure"] = True
+        emit("receive_is_secure1", data)
+    else :
+        data["is_secure"] = False
+        emit("receive_is_secure1", data)
 
 @socketio.on('check', namespace='/console')
 def check(data):
@@ -409,7 +434,7 @@ def monitor(data):
 @socketio.on('close', namespace='/console')
 def close(data):
     global console_status_list
-    node_number = data["node_number"]
+    node_number = int(data["node_number"])
     console_obj = console_status_list[node_number]
 
     console_obj.sess = None
@@ -419,6 +444,19 @@ def close(data):
 # Power
 @socketio.on('connect', namespace='/power')
 def connect():
+    url = "{}://{}:{}/{}/{}/".format(config.INTERPRETER_PROTOCOL,
+                                     config.INTERPRETER_HOST,
+                                     config.INTERPRETER_PORT,
+                                     config.INTERPRETER_NAME,
+                                     config.CATEGORY_SENSOR)
+    url += "get_all_data"
+
+    headers = {'Accept': 'application/json'}
+
+    response = requests.get(url, headers=headers)
+    res_data = json.loads(response.text)
+    emit("get_first_status_of_power_status", res_data)
+
     print("[Socket_Power] Connected")
     emit("response", {"data": "[Socket_Power] Connected"})
 
@@ -443,11 +481,10 @@ def set_power_status(data):
                                      config.INTERPRETER_PORT,
                                      config.INTERPRETER_NAME,
                                      config.CATEGORY_NODE)
-    url += "set_power_status"
+    url += "set_server_power_status"
 
     headers['Content-Type'] = 'application/x-www-form-urlencoded'
     headers['Accept'] = 'application/json'
-    form_data['node_number'] = data["node_number"]
     form_data['power_status'] = data["power_status"]
 
     response = requests.post(url, headers=headers, data=form_data)
@@ -482,16 +519,27 @@ def call_sensor_data(output_queue):
 
 # Send console messages
 def send_console_message():
-    global node_output_queue, is_thread_console_running, serial_process
+    global node_output_queue, is_thread_console_running, serial_process, console_status_list
 
     while is_thread_console_running:
         time.sleep(config.CONSOLE_READ_TIME)
         for node_number in range(config.NODE_NUM):
-            if not node_output_queue[node_number].empty():
-                message_ = node_output_queue[node_number].get()
-                # print("send: " + message)
+            console_obj = console_status_list[node_number]
 
-                socketio.emit("receive", {"node_number": node_number, "message": message_}, namespace='/console')
+            if not node_output_queue[node_number].empty():
+                message_ = node_output_queue[node_number].get()[:-2]
+
+                # Check if the console message is the input message
+                if message_ == console_obj.last_input:
+                    socketio.emit("receive",
+                                  {"node_number": node_number, "message": message_, "is_input_data": 1},
+                                  namespace='/console')
+                    console_obj.last_input = ""
+                else:
+                    socketio.emit("receive",
+                                  {"node_number": node_number, "message": message_, "is_input_data": 0},
+                                  namespace='/console')
+
                 eventlet.sleep(0)
 
         if not serial_process.is_alive():
@@ -500,7 +548,7 @@ def send_console_message():
 
 # Send sensor data
 def send_sensor_data():
-    global sensor_output_queue, is_thread_sensor_running, sensor_process
+    global sensor_output_queue, is_thread_sensor_running, sensor_process, console_status_list
 
     while is_thread_sensor_running:
         time.sleep(config.SENSOR_DATA_SEND_TIME)

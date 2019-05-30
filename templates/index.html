@@ -2,146 +2,271 @@
 <!-- 문서타입 -->
 <html lang="en">
 <!-- 휴먼랭귀지 -->
-    <head>
-        <meta charset="utf-8"> <!-- 문자셋 -->
-        <title>Hello Vraptor</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-        <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
-        <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-            crossorigin="anonymous"> -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
-        <!-- <script type="text/javascript" src="{{ url_for('static', filename='js/chart.js') }}"></script> -->
-        <!-- Socket -->
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/socket.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    </head>
-    <body>
-        <header>
-            <div class="top-view">
-                <div class="logo">
-                    <h1>V-Raptor</h1>
-                </div>
-                <!-- (bk) 이 부분 추가했음 누르면 계정 수정하는 페이지로 redirect 하게끔 -->
-                <div class="account">
-                    <a href="/account/update">{{ session["user_id"] }}</a>
-                </div>
-                <div class="logout">
-                    <a href="/account/logout">Logout</a>
-                </div>
-                <div id="node_1_temp"></div>
-                    <div class="dim-layer">
-                        <div class="dimBg"></div>
-                        <div id="layer2" class="pop-layer">
-                            <div class="pop-container">
-                                <div class="pop-conts">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        </header> <!-- 첫머리 -->
-        <nav>
-            <!-- sidebar 고려중... 화면이 좁아졌을경우나 모바일 환경에서 sidebar를 이용해 원하는 위치로 이동이 가능하게 만들까..? -->
-        </nav> <!-- 메뉴 -->
-        <article>
-            <div class="wrapper">
-                <div class="fan_control">
-                    <div class="fan_status">
-                        <button id="set_fan_mode_btn">Set Fan Mode (fan_auto_switch: true)</button>
-                        <input id="fan_default_temperature"/>
-                        <div id="current_status"></div>
-                        <div class="first_fan">
-                            First_fan
-                            <canvas id="myChart0"></canvas>
+<head>
+<title>Hello Vraptor</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="HTML5 website template">
+<meta name="keywords" content="global, template, html, sass, jquery">
+<meta name="author" content="Bucky Maler">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main_2.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/socket.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/functions-min.js') }}"></script>
 
-                            <div class="set_fan_speed">
-
-                            </div>
-                            <div class="ex_fan">
-                                <p id="first_fan_speed"></p>
-                            </div>
-                        </div>
-                        <div class="second_fan">
-                            Second_fan
-                            <canvas id="myChart1"></canvas>
-                        </div>
-                        <div class="third_fan">
-                            Third_fan
-                            <canvas id="myChart2"></canvas>
-                        </div>
-                        <div class="fourth_fan">
-                            Fourth_fan
-                            <canvas id="myChart3"></canvas>
-                        </div>
-                    </div>
+</head>
+<body>
+    <div class="perspective effect-rotate-left">
+      <div class="container"><div class="outer-nav--return"></div>
+        <div id="viewport" class="l-viewport">
+          <div class="l-wrapper">
+            <header class="header">
+              <div class="header--logo">
+                <p>V-Raptor</p>
+              </div>
+              <div class="account">
+                <div class="account_start" style="font-weight: bold;">
+                  현재 {{ session["user_id"] }} 로그인 중 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; <a href="/account/update">개인정보 수정</a> &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; <a href="/account/logout">LOGOUT</a>
                 </div>
-                <div class="status">
-                    <div class="nodes">
-                        <!-- <button id="node_1" onclick="console_click()" class="console_choice"> -->
-                        <button onclick="node_change2()" class="power_button">Node1</button>
-                        <button onclick="node_change()" class="power_button">Node2</button>
-                        <button class="monitor" id="monitor_1">monitor</button>
-                        <button class="secure" id="secure_1">secure</button>
-                        <div class="node111">
-                            <p>Node1</p>
-                            <div id="node_pow0"></div>
-                            <button class="node_pow_reset" id="nodePowerReset_0">POWER RESET</button>
-                            <button class="node_pow_off" id="nodePowerOff_0">POWER OFF</button>
-                            <button class="node_pow_on" id="nodePowerOn_0">POWER ON</button>
+              </div>
+              <div class="header--nav-toggle">
+                <span></span>
+              </div>
+            </header>
+            <nav class="l-side-nav">
+              <ul class="side-nav">
+                <li class="is-active"><span>Home</span></li>
+                <li><span>Nodes</span></li>
+                <li><span>Fans</span></li>
+              </ul>
+            </nav>
+            <ul class="l-main-content main-content">
+              <li class="l-section section section--is-active">
+                <div class="intro">
+                  <div class="intro--banner">
+                    <h1>CSE Capstone : <br>BMC Projects<br>based on ARM server</h1>
+                  </div>
+                  <div class="intro--options">
+                    <a href="#0">
+                      <h3>Team : 14천리</h3>
+                      <p>김명수<br>정병길<br>최준호</p>
+                    </a>
+                    <a href="#0">
+                      <h3>&</h3>
+                    </a>
+                    <a href="#0">
+                      <h3>Team : 나무늘보</h3>
+                      <p>강석현<br>이충익</p>
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li class="l-section section">
+                <div class="work">
+                  <h2>Selected Nodes</h2>
+
+                  <div class="work--lockup">
+                    <ul class="slider">
+
+                      <li class="slider--item slider--item-center">
+                          <button class="node_pow_reset_class" id="node_pow_reset_id">POWER RESET</button>&nbsp;&nbsp;
+                          <button class="node_pow_off_class" id="node_pow_off_id">POWER OFF</button>&nbsp;&nbsp;
+                          <button class="node_pow_on_class" id="node_pow_on_id">POWER ON</button>
+                          <div class="consoleuse" style="margin: 10px 0 0 0;">
+                              <button id="node1_start" style="background: black; color: white; font-weight: bold;">CONSOLE USE</button>
+                          </div>
+                          <div class="total_pow" style="margin: 10px 0 0 0; font-weight: bold;">POWER ON &nbsp; / &nbsp; OFF &nbsp; :<div class="node_pow_class" id="node_pow"></div></div><br>
+                        <div id="secure_alert_div">
+                            <div id="secure_alert_message" style="font-weight: bold; font-size: 20px; margin: -20px 0 12px 0; color: lightgreen;"></div>
+                        </div>
+                        <div id="node_start" style="background: #0D0D0D; width: 100%; height:400px;">
+                        </div>
+                        <div id="secure_block" style="display: none;">
+                          <button id="changeto_node2_in_block">CHANGE <span style="color: #2E64FE;">NODE 1</span> TO <span style="color: #FF8000;">NODE 2</span></button>
+                            <div class="monitor_secure">
+                                <button class="monitor" id="monitor_s" style="background: black; color: white; font-weight: bold;">MONITOR</button>&nbsp;&nbsp;
+                                <button class="secure" id="secure_s" style="background: black; color: white; font-weight: bold;">SECURE</button>
+                            </div>
                             <div class="node_1_terminal">
-                                <div class="console">
+                              <div class="console">
+                                <div class="console_content">
+                                  <div class="console_context" id="console-context_s">
+                                    <div id="node_secure" style="background: red; font-weight: bold; font-size: 25px; text-align: center;">
+                                      SECURE MODE
+                                    </div>
+                                  </div>
+                                  <div class="commandline">
+                                    <div class="console_input" style="background: gray; width: 100%; height: 20px; position:relative;">
+                                      <input autofocus class="console_command" id="console_input_s" style="width: 99%; height: 20px; position:relative; background: gray; color: white; "/>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <p class="slider--item-title" style="color: #2E64FE;">Node 1</p>
+                            <p class="slider--item-description" style="font-weight: bold;">Terminal Available</p>
+                        </div>
+                        <div id="view_node" style="display: none;">
+                            <div id="node111">
+                              <button id="changeto_node2">CHANGE <span style="color: #2E64FE;">NODE 1</span> TO <span style="color: #FF8000;">NODE 2</span></button>
+                                <div class="monitor_secure">
+                                    <button class="monitor" id="monitor_1" style="background: black; color: white; font-weight: bold;">MONITOR</button>&nbsp;&nbsp;
+                                    <button class="secure" id="secure_1" style="background: black; color: white; font-weight: bold;">SECURE</button>
+                                </div>
+                                <div class="node_1_terminal">
+                                  <div class="console">
                                     <div class="console_content">
-                                        <div id="example">
+                                      <p class="console_context" id="console-context_1" style="user-select: text;">
+                                      </p>
+                                      <div class="commandline">
+                                        <div class="console_input" style="background: gray; width: 100%; height: 20px; position:relative;">
+                                          <input autofocus class="console_command" id="console_input_1" style="width: 99%; height: 20px; position:relative; background: gray; color: white; "/>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <p class="slider--item-title" style="color: #2E64FE;">Node 1</p>
+                                <p class="slider--item-description" style="font-weight: bold;">Terminal Available</p>
+                            </div>
+
+                            <div id="node1_block">
+                              <button id="changeto_node2_in_block">CHANGE <span style="color: #2E64FE;">NODE 1</span> TO <span style="color: #FF8000;">NODE 2</span></button>
+                                <div class="monitor_secure">
+                                    <button class="monitor" id="monitor_b" style="background: black; color: white; font-weight: bold;">MONITOR</button>&nbsp;&nbsp;
+                                    <button class="secure" id="secure_b" style="background: black; color: white; font-weight: bold;">SECURE</button>
+                                </div>
+                                <div class="node_1_terminal">
+                                  <div class="console">
+                                    <div class="console_content">
+                                      <div class="console_context" id="console-context_b">
+                                        <div id="node1_disconnect" style="background: red; font-weight: bold; font-size: 25px; text-align: center;">
+                                          DISCONNECT
+                                        </div>
+                                      </div>
+                                      <div class="commandline">
+                                        <div class="console_input" style="background: gray; width: 100%; height: 20px; position:relative;">
+                                          <input autofocus class="console_command" id="console_input_b" style="width: 99%; height: 20px; position:relative; background: gray; color: white; "/>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <p class="slider--item-title" style="color: #2E64FE;">Node 1</p>
+                                <p class="slider--item-description" style="font-weight: bold;">Terminal Available</p>
+                            </div>
+
+                            <div id="node222">
+                              <button id="changeto_node1">CHANGE <span style="color: #FF8000;">NODE 2</span> TO <span style="color: #2E64FE;">NODE 1</span></button>
+                                  <div class="monitor_secure">
+                                      <button class="monitor" id="monitor_2" style="background: black; color: white; font-weight: bold;">MONITOR</button>&nbsp;&nbsp;
+                                      <button class="secure" id="secure_2" style="background: black; color: white; font-weight: bold;">SECURE</button>
+                                  </div>
+                                  <div class="node_1_terminal">
+                                    <div class="console">
+                                      <div class="console_content">
+                                        <div class="console_context" id="console-context_2">
+                                          <div id="node1_disconnect" style="background: red; font-weight: bold; font-size: 25px; text-align: center;">
+                                            DISCONNECT
+                                          </div>
                                         </div>
                                         <div class="commandline">
-                                            <div class="console_input" style="background: gray; position:relative; bottom: 0px;">
-                                                <input autofocus class="console_input_class" id="console_input_id" style="width: 100%; height: 20px; position:relative; bottom: -205px; background: gray; color: white; "/>
-                                            </div>
+                                          <div class="console_input" style="background: gray; width: 100%; height: 20px; position:relative;">
+                                            <input autofocus class="console_command" id="console_input_2" style="width: 99%; height: 20px; position:relative; background: gray; color: white; "/>
+                                          </div>
                                         </div>
+                                      </div>
                                     </div>
-                                </div>
+                                  </div>
+                                  <p class="slider--item-title" style="color: #FF8000;">Node 2</p>
+                                  <p class="slider--item-description" style="font-weight: bold;">Terminal <span style="color: red;">NOT</span> Available</p>
                             </div>
                         </div>
-                        <div id="node1test">
-                        </div>
-                        <div class="node222">
-                            <p>Node2</p>
-                            <div id="node_pow1"></div>
-                            <button class="node_pow_reset" id="nodePowerReset_1">POWER RESET</button>
-                            <button class="node_pow_off" id="nodePowerOff_1">POWER OFF</button>
-                            <button class="node_pow_on" id="nodePowerOn_1">POWER ON</button>
-                            <div class="node_1_terminal">
-                                <div class="console">
-                                    <div class="console_content">
-                                        <div id="example2">
-                                        </div>
-                                        <div class="commandline">
-                                            <div class="console_input" style="background: gray; position:relative; bottom: 0px;">
-                                                <input autofocus class="console_input_class" id="console_input_id2" style="width: 100%; height: 20px; position:relative; bottom: -205px; background: gray; color: white; "/>
-                                            </div>
-                                        </div>
-                                    </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </li>
+              <li class="l-section section">
+                <div class="about">
+                  <div class="about--banner" style="z-index: 3;">
+                      <div class="fan_control">
+                        <div class="fanmode_wrapper">
+                            <div class="fanmode_default">
+                                <div class="modeselect" style="margin: -45px 0 0 29%;">
+                                  <div class="defaultvalue" style="font-weight: bold;">DEFAULT : &nbsp;<input id="fan_default_temperature" style="background: black; color: white; font-weight: bold; "/>&nbsp;&nbsp;<button id="set_fan_mode_btn">FAN AUTO MODE</button>
                                 </div>
+                                <div id="node_1_temp" style="margin: 10px 0 0 14%; color: #FF8000;">TEMPERATURE : </div><br>
+                                <div style="font-weight: bold; width: 125px; float: left; margin: -15px 0 10px 14%; z-index: 2147483647;">CURRENT MODE : </div><div id="current_status" style="font-weight: bold; float: left; width: 400px; margin: -15px 0 10px 0;"></div>
                             </div>
                         </div>
-                    </div>
+                          <div class="fan_status">
+                              <div class="first_fan">
+                                  <div style="font-size: 20px; margin: 0 0 -15px 0;"><span style="margin: 0 0 0 35%; float: left;">FAN 1 : </span><div id="fan1_speed_text" style="width: 30px; float: left; margin: 0 0 0 2%; font-weight: normal;"></div></div><br>
+                                  <input id="fan-speed-input_0" style="background: black; color: white; margin: 0 0 0 4%;"/>&nbsp;
+                                  <button class="fan-speed-btn-class" id="fan-speed-btn-id_0" style="background: black; color: white; margin: 0 0 20px 0;">SET SPEED</button>
+                                  <canvas id="myChart0"></canvas>
+
+                                  <div class="set_fan_speed" >
+
+                                  </div>
+                                  <div class="ex_fan">
+                                      <p id="first_fan_speed"></p>
+                                  </div>
+                              </div>
+                              <div class="f_s_between"></div>
+                              <div class="second_fan">
+                                  <div style="font-size: 20px; margin: 0 0 -15px 0;"><span style="margin: 0 0 0 35%; float: left;">FAN 2 : </span><div id="fan2_speed_text" style="width: 30px; float: left; margin: 0 0 0 2%; font-weight: normal;"></div></div><br>
+                                  <input id="fan-speed-input_1" style="background: black; color: white; margin: 0 0 0 4%;"/>
+                                  <button class="fan-speed-btn-class" id="fan-speed-btn-id_1" style="background: black; color: white; margin: 0 0 20px 0 ;">SET SPEED</button>
+                                  <canvas id="myChart1"></canvas>
+                              </div>
+                              <div class="third_fan">
+                                  <div style="font-size: 20px; margin: 0 0 -15px 0;"><span style="margin: 0 0 0 35%; float: left;">FAN 3 : </span><div id="fan3_speed_text" style="width: 30px; float: left; margin: 0 0 0 2%; font-weight: normal;"></div></div><br>
+                                  <input id="fan-speed-input_2" style="background: black; color: white; margin: 0 0 0 4%;"/>
+                                  <button class="fan-speed-btn-class" id="fan-speed-btn-id_2" style="background: black; color: white; margin: 0 0 20px 0;">SET SPEED</button>
+                                  <canvas id="myChart2"></canvas>
+                              </div>
+                              <div class="t_f_between"></div>
+                              <div class="fourth_fan">
+                                  <div style="font-size: 20px; margin: 0 0 -15px 0;"><span style="margin: 0 0 0 35%; float: left;">FAN 4 : </span><div id="fan4_speed_text" style="width: 30px; float: left; margin: 0 0 0 2%; font-weight: normal;"></div></div><br>
+                                  <input id="fan-speed-input_3" style="background: black; color: white; margin: 0 0 0 4%;"/>
+                                  <button class="fan-speed-btn-class" id="fan-speed-btn-id_3" style="background: black; color: white; margin: 0 0 20px 0 ;">SET SPEED</button>
+                                  <canvas id="myChart3"></canvas>
+                              </div>
+                          </div>
+                      </div>
+                      <span>
+                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 150 118" style="enable-background:new 0 0 150 118;" xml:space="preserve">
+                        <g transform="translate(0.000000,118.000000) scale(0.100000,-0.100000)">
+                        </g>
+                        </svg>
+                      </span>
+                    </a>
+                  </div>
                 </div>
-            </div>
-        </article> <!-- 본문 -->
-        <footer>
-            <div class="madeby">
-                <div class="madeby_inner">
-                    캡스톤디자인 팀 : 김명수, 강석현, 이충익, 정병길, 최준호
-                </div>
-            </div>
-        </footer> <!-- 끝머리 -->
-    </body>
-</html>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <ul class="outer-nav">
+        <li class="is-active">Home</li>
+        <li>Nodes</li>
+        <li>Fans</li>
+      </ul>
+    </div>
+</body>
